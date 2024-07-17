@@ -7,5 +7,8 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  variants:{
+    flex: ['responsive', 'hover', 'focus'],
+  }
 }
 
