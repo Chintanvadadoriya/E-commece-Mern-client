@@ -5,7 +5,7 @@ import OrdersChart from '../../components/Dashboard/OrdersChart';
 import UserActivityChart from '../../components/Dashboard/UserActivityChart';
 const isLargeScreen = window.innerWidth > 1024
 
-console.log('isLargeScreen', isLargeScreen   )
+
 const Dashboard = () => {
     const summaryData = {
         totalSales: 12000,
@@ -31,7 +31,7 @@ const Dashboard = () => {
 
     return (
         <div className={`${isLargeScreen? 'custom-container':''} container mx-auto p-6`}>
-            <h1 className="text-2xl font-semibold mb-6">Dashboard</h1>
+            <h1 className="text-2xl font-semibold mb-6 flex justify-center mb-10">Dashboard</h1>
             <SummaryCards {...summaryData} />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <SalesChart data={salesData} />

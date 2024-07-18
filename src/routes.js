@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
-import ProductList from './components/ProductList';
 import OrderList from './components/OrderList';
 import ProductCreate from './pages/Products/AddProduct';
 import Dashboard from './pages/Dashboard/Dashboard';
+import ProductList from './pages/Products/ProductList';
 
 const AppRoutes = () => {
   return (
