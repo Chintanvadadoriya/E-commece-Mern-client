@@ -14,10 +14,10 @@ const Sidebar = ({toggleSidebar,isOpen,setIsOpen}) => {
         {isOpen && <AiFillCloseCircle className="w-55 inline-block ml-60"  onClick={toggleSidebar}/>}
       <div className="p-4 pt-11 pl-10">
         <Link to="/" className="block mb-4" >Dashboard</Link>
-        <Link to="/products" className="block mb-4" >Products</Link>
+        <Link to="/products-list" className="block mb-4" >Products List</Link>
         <Link to="/products-create" className="block mb-4" >Product Create</Link>
 
-        <Link to="/order-list" className="block mb-4">Orders</Link>
+        {/* <Link to="/order-list" className="block mb-4">Orders</Link> */}
       </div>
     </aside>
   );

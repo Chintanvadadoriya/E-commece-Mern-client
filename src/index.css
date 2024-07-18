@@ -5,4 +5,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
+.custom-container {
+  width: calc(100% - 30rem); /* Adjust the width as needed */
+}

@@ -5,7 +5,6 @@ import Footer from './Footer';
 
 const MainLayout = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
-    console.log('children', children)
     const toggleSidebar = () => {
       setIsOpen(!isOpen);
     };
