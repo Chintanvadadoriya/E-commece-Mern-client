@@ -50,6 +50,15 @@ const ProductData = [
     paymentStatus:"paid",
     trackingStatus:"shipped"
 
+  },
+  {
+    src: "https://m.media-amazon.com/images/I/41ik61SaOXL._AC_UF1000,1000_QL80_.jpg",
+    name: " IPhone 10",
+    qty: 3,
+    price: 66999,
+    paymentStatus:"paid",
+    trackingStatus:"canceled"
+
   }
 ]
 
