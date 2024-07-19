@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SearchItem from '../common/SearchItem';
 import { Edite } from '../common/Button';
 import Model from '../common/ModelUpdateOrderTrack';
+import { getStatusColor } from '../../utils/helpers';
 
 const ProductData = [
   {
@@ -10,7 +11,7 @@ const ProductData = [
     qty: 1,
     price: 99999,
     paymentStatus:"paid",
-    trackingStatus:"ordered"
+    trackingStatus:"pending"
   },
   {
     src: "https://i.pinimg.com/236x/c7/db/6d/c7db6d290d552b8590d58a7b4460d135.jpg",
@@ -27,7 +28,7 @@ const ProductData = [
     name: " IPhone 11",
     qty: 1,
     price: 75999,
-    paymentStatus:"paid",
+    paymentStatus:"unpaid",
     trackingStatus:"processing"
 
 
@@ -39,6 +40,15 @@ const ProductData = [
     price: 66999,
     paymentStatus:"paid",
     trackingStatus:"delivered"
+
+  },
+  {
+    src: "https://m.media-amazon.com/images/I/41ik61SaOXL._AC_UF1000,1000_QL80_.jpg",
+    name: " IPhone 10",
+    qty: 3,
+    price: 66999,
+    paymentStatus:"paid",
+    trackingStatus:"shipped"
 
   }
 ]
@@ -83,6 +93,7 @@ const OrderTable = ({ isLargeScreen }) => {
       <tbody>
         {
           ProductData?.map((data, index) => {
+            const statusColor = data?.paymentStatus === 'paid' ? 'text-green-500' : 'text-red-500';
             return (
               <>
                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
@@ -98,10 +109,10 @@ const OrderTable = ({ isLargeScreen }) => {
                   <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                     {data?.price}
                   </td>
-                  <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                  <td className={`px-6 py-4 font-semibold text-gray-900 dark:text-white ${getStatusColor(data?.trackingStatus)}`}>
                     {data?.trackingStatus}
                   </td>
-                  <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                  <td className={`px-6 py-4 font-semibold text-gray-900 dark:text-white ${statusColor}`}>
                     {data?.paymentStatus}
                   </td>
                   <td className="px-6 py-4">

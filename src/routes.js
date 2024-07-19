@@ -5,6 +5,8 @@ import ProductCreate from './pages/Products/AddProduct';
 import Dashboard from './pages/Dashboard/Dashboard';
 import ProductList from './pages/Products/ProductList';
 import OrderList from './pages/Orders/OrderList';
+import CreateCoupon from './pages/CouponCode/CreateCoupon';
+import CouponListTable from './pages/CouponCode/CouponList';
 
 const AppRoutes = () => {
   return (
@@ -14,8 +16,11 @@ const AppRoutes = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/products-list" element={<ProductList />} />
           <Route path="/products-create" element={<ProductCreate />} />
-
           <Route path="/order-list" element={<OrderList />} />
+          <Route path="/create-code" element={<CreateCoupon />} />
+          <Route path="/coupon-list" element={<CouponListTable />} />
+
+
 
         </Routes>
       </MainLayout>

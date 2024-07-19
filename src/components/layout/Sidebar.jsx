@@ -5,16 +5,28 @@ import { AiFillCloseCircle, AiOutlineDown } from "react-icons/ai"; // Import dow
 const Sidebar = ({ toggleSidebar, isOpen, setIsOpen }) => {
     const [productsOpen, setProductsOpen] = useState(false);
     const [ordersOpen, setOrdersOpen] = useState(false);
+    const [couponCodeOpen, setCouponCodeOpen] = useState(false);
+
 
     const toggleProducts = () => {
         setProductsOpen(!productsOpen);
         if (ordersOpen) setOrdersOpen(false);
+        if(couponCodeOpen) setCouponCodeOpen(false)
     };
 
     const toggleOrders = () => {
         setOrdersOpen(!ordersOpen);
         if (productsOpen) setProductsOpen(false);
+        if(couponCodeOpen) setCouponCodeOpen(false)
+
     };
+    const toggleCouponCodeOpen = () => {
+        setCouponCodeOpen(!couponCodeOpen);
+        if (productsOpen) setProductsOpen(false);
+        if (ordersOpen) setOrdersOpen(false);
+
+    };
+
 
     return (
         <aside className={`bg-gray-800 text-white ${isOpen ? 'w-64' : 'w-0'} fixed h-full top-0 left-0 overflow-y-auto transition-all duration-300 ease-in-out z-50`}>
@@ -43,7 +55,19 @@ const Sidebar = ({ toggleSidebar, isOpen, setIsOpen }) => {
                     {ordersOpen && (
                         <div className="mt-4 pl-4">
                             <Link to="/order-list" className="block mb-3">Order List</Link>
-                            {/* Add more links as needed for Orders dropdown */}
+                        </div>
+                    )}
+                </div>
+                <div className="mb-4">
+                    <div className="flex justify-between items-center cursor-pointer" onClick={toggleCouponCodeOpen}>
+                        <span className="block">Coupon Code</span>
+                        <AiOutlineDown className={`ml-1 ${ordersOpen ? 'transform rotate-180' : ''}`} />
+                    </div>
+                    {couponCodeOpen && (
+                        <div className="mt-4 pl-4">
+                            <Link to="/create-code" className="block mb-3">Create Coupon-code</Link>
+                            <Link to="/coupon-list" className="block mb-3">Coupon-code List</Link>
+
                         </div>
                     )}
                 </div>
