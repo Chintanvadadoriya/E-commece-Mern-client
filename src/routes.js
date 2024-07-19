@@ -7,6 +7,7 @@ import ProductList from './pages/Products/ProductList';
 import OrderList from './pages/Orders/OrderList';
 import CreateCoupon from './pages/CouponCode/CreateCoupon';
 import CouponListTable from './pages/CouponCode/CouponList';
+import UserProfileData from './pages/UserProfile/UserProfileData';
 
 const AppRoutes = () => {
   return (
@@ -19,6 +20,8 @@ const AppRoutes = () => {
           <Route path="/order-list" element={<OrderList />} />
           <Route path="/create-code" element={<CreateCoupon />} />
           <Route path="/coupon-list" element={<CouponListTable />} />
+          <Route path="/user-profile" element={<UserProfileData />} />
+
 
 
 

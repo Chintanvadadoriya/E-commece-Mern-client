@@ -35,6 +35,7 @@ const Sidebar = ({ toggleSidebar, isOpen, setIsOpen }) => {
           </div>
             <div className="p-4 pt-11 pl-10">
                 <Link to="/" className="block mb-4">Dashboard</Link>
+                
                 <div className="mb-4">
                     <div className="flex justify-between items-center cursor-pointer" onClick={toggleProducts}>
                         <span className="block">Products</span>
