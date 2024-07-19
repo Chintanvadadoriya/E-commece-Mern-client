@@ -36,6 +36,10 @@ const Header = ({ toggleSidebar, isOpen }) => {
   const ShowUserProfile=()=>{
     navigate('/user-profile')
   }
+  const LogoutUser=()=>{
+    navigate('/update-product')
+
+  }
   return (
     <header className="bg-blue-600 text-white p-4">
       <div className="flex justify-between items-center">
@@ -64,7 +68,7 @@ const Header = ({ toggleSidebar, isOpen }) => {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20 transition duration-200 ease-in-out transform opacity-100 scale-100">
                 <span className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer" onClick={ShowUserProfile}>Profile</span>
                 <span onClick={openModal} className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer">Change Password  </span>
-                <span className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer">Logout</span>
+                <span className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer" onClick={LogoutUser}>Logout</span>
               </div>
             )}
           </span>

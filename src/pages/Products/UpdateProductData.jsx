@@ -1,7 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import CustomInput from '../../components/common/InputField';
+import { BackButton, productdata } from '../../utils/helpers';
+const isLargeScreen = window.innerWidth > 1024
 
-const ProductCreate = () => {
+
+const product = productdata
+
+console.log('product', product)
+function UpdateProductData() {
+    let { id } = useParams();
+    const navigate = useNavigate();
+
     const [productData, setProductData] = useState({
         email: '',
         name: '',
@@ -13,9 +23,32 @@ const ProductCreate = () => {
         stock: 0,
         images: [''],
         tags: [],
-        specifications: [{ name: "", details: [] }],
+        specifications: [{ name: '', details: [] }],
         AvailableOffers: [],
     });
+
+    useEffect(() => {
+        if (product) {
+            setProductData({
+                email: product.email,
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                category: product.category,
+                subCategory: product.subCategory,
+                company: product.company,
+                stock: product.stock,
+                images: product.images,
+                tags: product.tags,
+                specifications: product.specifications,
+                AvailableOffers: product.AvailableOffers,
+            });
+        }
+    }, [product]);
+
+    useEffect(() => {
+
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -61,17 +94,36 @@ const ProductCreate = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        productData.AvailableOffers = productData?.AvailableOffers?.split(',')
-        console.log(productData); // Replace with your form submission logic
+        productData.AvailableOffers = productData?.AvailableOffers?.split(',');
+        console.log(productData); // Replace with your form submission logic for updating the product
+
+        // Example of updating the product using fetch
+        fetch(`/api/products/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(productData),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Product updated successfully:', data);
+                navigate(`/product/${id}`); // Navigate to the product detail page or another page
+            })
+            .catch((error) => {
+                console.error('Error updating product:', error);
+            });
     };
+
+    function backTo(){
+        navigate('/products-list')
+    }
     return (
         <>
-            <div> 
-                {/* sticky top-5 z-50 */}
-                <h2 className="text-3xl grid justify-items-center mb-4">Create Product</h2>
+            <div className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6`}>
+                <BackButton back={backTo}/>
+                <h1 className="text-2xl font-semibold mb-6 flex justify-center mb-10">Update-product {id}</h1>
             </div>
-
-
             <form onSubmit={handleSubmit} className="max-w-xl mx-auto mt-6">
                 <CustomInput
                     id="email"
@@ -203,19 +255,18 @@ const ProductCreate = () => {
                     name="AvailableOffers"
                     value={productData.AvailableOffers}
                     onChange={handleChange}
-                    label="AvailableOffers"
+                    label="Available Offers"
                 />
 
                 <button
                     type="submit"
                     className="h-11 w-full bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                    Create Product
+                    Update Product
                 </button>
             </form>
-
         </>
-    );
-};
-//
-export default ProductCreate;
+    )
+}
+
+export default UpdateProductData

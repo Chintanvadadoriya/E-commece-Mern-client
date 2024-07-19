@@ -55,7 +55,7 @@ function CreateCoupon() {
                     type="submit"
                     className="h-11 w-full bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                    Submit
+                    Create Coupon code
                 </button>
             </form>
 
