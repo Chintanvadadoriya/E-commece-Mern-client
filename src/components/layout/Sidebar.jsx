@@ -33,9 +33,9 @@ const Sidebar = ({ toggleSidebar, isOpen, setIsOpen }) => {
           <div className='flex justify-end'>
             {isOpen && <AiFillCloseCircle className="w-8 h-8 inline-block ml-2 mt-2 cursor-pointer" onClick={toggleSidebar} />}
           </div>
-            <div className="p-4 pt-11 pl-10">
+            <div className=" p- pt-11 pl-10">
                 <Link to="/" className="block mb-4">Dashboard</Link>
-                <div className="mb-4">
+                <div className="mb-8">
                     <div className="flex justify-between items-center cursor-pointer" onClick={toggleProducts}>
                         <span className="block">Products</span>
                         <AiOutlineDown className={`ml-1 ${productsOpen ? 'transform rotate-180' : ''}`} />
@@ -47,7 +47,7 @@ const Sidebar = ({ toggleSidebar, isOpen, setIsOpen }) => {
                         </div>
                     )}
                 </div>
-                <div className="mb-4">
+                <div className="mb-8">
                     <div className="flex justify-between items-center cursor-pointer" onClick={toggleOrders}>
                         <span className="block">Orders</span>
                         <AiOutlineDown className={`ml-1 ${ordersOpen ? 'transform rotate-180' : ''}`} />
@@ -58,7 +58,7 @@ const Sidebar = ({ toggleSidebar, isOpen, setIsOpen }) => {
                         </div>
                     )}
                 </div>
-                <div className="mb-4">
+                <div className="mb-8">
                     <div className="flex justify-between items-center cursor-pointer" onClick={toggleCouponCodeOpen}>
                         <span className="block">Coupon Code</span>
                         <AiOutlineDown className={`ml-1 ${ordersOpen ? 'transform rotate-180' : ''}`} />
