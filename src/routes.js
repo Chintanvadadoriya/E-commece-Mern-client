@@ -9,27 +9,29 @@ import CreateCoupon from './pages/CouponCode/CreateCoupon';
 import CouponListTable from './pages/CouponCode/CouponList';
 import UserProfileData from './pages/UserProfile/UserProfileData';
 import UpdateProductData from './pages/Products/UpdateProductData';
+import SignupForm from './pages/auth/SignupForm';
+import PublicLayout from './components/layout/PublicLayout';
+import LoginForm from './pages/auth/LoginForm';
 
 const AppRoutes = () => {
   return (
     <Router>
-      <MainLayout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/products-list" element={<ProductList />} />
-          <Route path="/products-create" element={<ProductCreate />} />
-          <Route path="/order-list" element={<OrderList />} />
-          <Route path="/create-code" element={<CreateCoupon />} />
-          <Route path="/coupon-list" element={<CouponListTable />} />
-          <Route path="/user-profile" element={<UserProfileData />} />
-          <Route path="/update-product/:id" element={<UpdateProductData />} />
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<PublicLayout><SignupForm /></PublicLayout>} />
+        <Route path="/login" element={<PublicLayout><LoginForm /></PublicLayout>} />
 
 
-
-
-
-        </Routes>
-      </MainLayout>
+        {/* Private Routes */}
+        <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
+        <Route path="/products-list" element={<MainLayout><ProductList /></MainLayout>} />
+        <Route path="/products-create" element={<MainLayout><ProductCreate /></MainLayout>} />
+        <Route path="/order-list" element={<MainLayout><OrderList /></MainLayout>} />
+        <Route path="/create-code" element={<MainLayout><CreateCoupon /></MainLayout>} />
+        <Route path="/coupon-list" element={<MainLayout><CouponListTable /></MainLayout>} />
+        <Route path="/user-profile" element={<MainLayout><UserProfileData /></MainLayout>} />
+        <Route path="/update-product/:id" element={<MainLayout><UpdateProductData /></MainLayout>} />
+      </Routes>
     </Router>
   );
 };

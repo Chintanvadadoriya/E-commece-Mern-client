@@ -34,7 +34,7 @@ const Sidebar = ({ toggleSidebar, isOpen, setIsOpen }) => {
             {isOpen && <AiFillCloseCircle className="w-8 h-8 inline-block ml-2 mt-2 cursor-pointer" onClick={toggleSidebar} />}
           </div>
             <div className="p-4 pt-11 pl-10">
-                <Link to="/" className="block mb-4">Dashboard</Link>
+                <Link to="/dashboard" className="block mb-4">Dashboard</Link>
                 
                 <div className="mb-4">
                     <div className="flex justify-between items-center cursor-pointer" onClick={toggleProducts}>

@@ -1,0 +1,108 @@
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { Link, useNavigate } from 'react-router-dom';
+
+
+// Validation schema
+const schema = yup.object().shape({
+  name: yup.string().required('Name is required'),
+  userType: yup.string().oneOf(['customer', 'admin'], 'Invalid user type').required('User type is required'),
+  email: yup.string().email('Invalid email').required('Email is required'),
+  password: yup.string().min(5, 'Password must be at least 5 characters').required('Password is required'),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password'), null], 'Passwords must match')
+    .required('Confirm Password is required'),
+});
+
+const SignupForm = () => {
+  const navigate=useNavigate()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = (data) => {
+    console.log(data);
+    navigate('/login')
+  };
+
+  return (
+    <div className="w-full max-w-lg mx-auto p-4 bg-slate-300 bg-opacity-60 shadow-lg rounded-lg">
+      <h2 className="text-3xl font-bold mb-4 text-center">Signup Form</h2>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-lg mb-1">Name</label>
+          <input
+            type="text"
+            {...register('name')}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+          {errors.name && <p className="text-red-600">{errors.name.message}</p>}
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 text-lg mb-1">User Type</label>
+          <select
+            {...register('userType')}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            <option value="customer" disabled>Customer</option>
+            <option value="admin">Admin</option>
+          </select>
+          {errors.userType && <p className="text-red-600">{errors.userType.message}</p>}
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 text-lg mb-1">Email</label>
+          <input
+            type="email"
+            {...register('email')}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+          {errors.email && <p className="text-red-600">{errors.email.message}</p>}
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 text-lg mb-1">Password</label>
+          <input
+            type="password"
+            {...register('password')}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+          {errors.password && <p className="text-red-600">{errors.password.message}</p>}
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 text-lg mb-1">Confirm Password</label>
+          <input
+            type="password"
+            {...register('confirmPassword')}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+          {errors.confirmPassword && <p className="text-red-600">{errors.confirmPassword.message}</p>}
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 px-6 rounded-lg text-lg hover:bg-blue-700 transition duration-200"
+        >
+          Signup
+        </button>
+      </form>
+      <div className="text-center mt-4">
+        <p className="text-gray-700 text-lg">Already logged in?</p>
+        <Link to="/login" className="text-blue-600 text-lg hover:underline">
+          Log in
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default SignupForm;

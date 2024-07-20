@@ -52,7 +52,7 @@ const Header = ({ toggleSidebar, isOpen }) => {
   };
 
   const LogoutUser = () => {
-    navigate('/update-product');
+    navigate('/login');
   };
 
   return (
