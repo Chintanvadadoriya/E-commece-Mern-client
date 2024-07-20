@@ -6,7 +6,7 @@ import * as yup from 'yup';
 
 
 const loginSchema = yup.object().shape({
-    userType: yup.string().oneOf(['customer', 'admin'], 'Invalid user type').required('User type is required'),
+    userType: yup.string().required('User type is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string().min(5, 'Password must be at least 5 characters').required('Password is required'),
   });
@@ -30,15 +30,14 @@ const navigate = useNavigate();
     <div className="w-full max-w-lg mx-auto p-4 bg-slate-300 bg-opacity-60 shadow-lg rounded-lg">
       <h2 className="text-3xl font-bold mb-4 text-center">Login Form</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4">
+      <div className="mb-4">
           <label className="block text-gray-700 text-lg mb-1">User Type</label>
-          <select
+          <input
+            type="text"
+            value='Admin'
             {...register('userType')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          >
-            <option value="customer" disabled>Customer</option>
-            <option value="admin">Admin</option>
-          </select>
+          />
           {errors.userType && <p className="text-red-600">{errors.userType.message}</p>}
         </div>
 

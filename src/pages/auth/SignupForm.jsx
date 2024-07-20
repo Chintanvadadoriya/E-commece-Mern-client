@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 // Validation schema
 const schema = yup.object().shape({
   name: yup.string().required('Name is required'),
-  userType: yup.string().oneOf(['customer', 'admin'], 'Invalid user type').required('User type is required'),
+  userType: yup.string().required('User type is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
   password: yup.string().min(5, 'Password must be at least 5 characters').required('Password is required'),
   confirmPassword: yup
@@ -48,13 +48,12 @@ const SignupForm = () => {
 
         <div className="mb-4">
           <label className="block text-gray-700 text-lg mb-1">User Type</label>
-          <select
+          <input
+            type="text"
+            value='Admin'
             {...register('userType')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          >
-            <option value="customer" disabled>Customer</option>
-            <option value="admin">Admin</option>
-          </select>
+          />
           {errors.userType && <p className="text-red-600">{errors.userType.message}</p>}
         </div>
 
