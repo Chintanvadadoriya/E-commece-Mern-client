@@ -29,14 +29,18 @@ const userdata = useSelector(UserData);
   const onSubmit = async(data) => {
 
     try{
-     let {payload}=await dispatch(login(data))
-    
-     if(payload?.userData){
-       navigate('/dashboard');
-       showToast('success', 'You have successfully login.');
-     }
+      const result = await dispatch(login(data));
+      if (result.meta.requestStatus === 'fulfilled') {
+        const { payload } = result;
+        if (payload?.userData) {
+          navigate('/dashboard');
+          showToast('success', 'You have successfully logged in.');
+        }
+      } else {
+        showToast('error', result.payload || 'Login failed.');
+      }
     }catch(error){
-      console.error('err1612199',error)
+      console.error('err1612199',error.message)
     }
   };
 
