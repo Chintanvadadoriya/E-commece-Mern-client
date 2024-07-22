@@ -60,9 +60,7 @@ export const productdata = {
   "subCategory": "Computers",
   "company": "TechCorp",
   "stock": 50,
-  "images": [
-    "https://rukminim2.flixcart.com/image/312/312/xif0q/computer/c/1/w/s151-laptop-ultimus-original-imagkv7pjzfdh8mc.jpeg?q=70"
-  ],
+  "images": "https://rukminim2.flixcart.com/image/312/312/xif0q/computer/c/1/w/s151-laptop-ultimus-original-imagkv7pjzfdh8mc.jpeg?q=70",
   "tags": [
     "laptop",
     "high-performance",
