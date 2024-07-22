@@ -3,8 +3,9 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import CustomInput from '../../components/common/InputField';
-import { BackButton, productdata } from '../../utils/helpers';
+import { BackButton } from '../../utils/styleComponent';
 import { productUpdateSchema } from '../../utils/validators';
+import { productdata } from '../../utils/helpers';
 
 
 const isLargeScreen = window.innerWidth > 1024;

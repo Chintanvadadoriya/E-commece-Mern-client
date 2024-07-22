@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, UserData } from '../../redux/authSlice';
 
 
 const loginSchema = yup.object().shape({
@@ -13,6 +15,8 @@ const loginSchema = yup.object().shape({
 
 const LoginForm = () => {
 const navigate = useNavigate();
+const dispatch = useDispatch();
+const userdata = useSelector(UserData);
   const {
     register,
     handleSubmit,
@@ -20,10 +24,15 @@ const navigate = useNavigate();
   } = useForm({
     resolver: yupResolver(loginSchema),
   });
-
-  const onSubmit = (data) => {
-    console.log(data);
-    navigate('/dashboard')
+  const onSubmit = async(data) => {
+    try{
+     let {payload}=await dispatch(login(data))
+     if(payload?.userData){
+       navigate('/dashboard');
+     }
+    }catch(error){
+      console.error('err1612199',error)
+    }
   };
 
   return (
@@ -34,7 +43,7 @@ const navigate = useNavigate();
           <label className="block text-gray-700 text-lg mb-1">User Type</label>
           <input
             type="text"
-            value='Admin'
+            value='admin'
             {...register('userType')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
@@ -45,6 +54,7 @@ const navigate = useNavigate();
           <label className="block text-gray-700 text-lg mb-1">Email</label>
           <input
             type="email"
+            value="logisticworkit@gmail.com"
             {...register('email')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
@@ -55,6 +65,7 @@ const navigate = useNavigate();
           <label className="block text-gray-700 text-lg mb-1">Password</label>
           <input
             type="password"
+            value='12345'
             {...register('password')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
@@ -65,7 +76,7 @@ const navigate = useNavigate();
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-6 rounded-lg text-lg hover:bg-blue-700 transition duration-200"
         >
-          Login
+          {/* {`${loading ? 'Loading...':'Login'}`} */}Login
         </button>
       </form>
       <div className="text-center mt-4">

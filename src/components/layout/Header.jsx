@@ -2,8 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AiOutlineBars } from 'react-icons/ai';
 import ModelChangePassword from '../common/ModelChangePassword';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../redux/authSlice';
+import { useDispatch } from 'react-redux';
 
 const Header = ({ toggleSidebar, isOpen }) => {
+  const dispatch = useDispatch();
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isDropdownOpenNotification, setDropdownOpenNotification] = useState(false);
@@ -51,7 +55,9 @@ const Header = ({ toggleSidebar, isOpen }) => {
     navigate('/user-profile');
   };
 
-  const LogoutUser = () => {
+  const LogoutUser = (e) => {
+    e.preventDefault()
+    dispatch(logout());
     navigate('/login');
   };
 
