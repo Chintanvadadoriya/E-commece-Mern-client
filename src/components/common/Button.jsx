@@ -25,8 +25,8 @@ export function Cancel({close}) {
 }
 
 
-export function Update({update}) {
+export function Update({Update}) {
     return (
-        <button type="button" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Update</button>
+        <button type="button" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">{Update}</button>
     )
 }

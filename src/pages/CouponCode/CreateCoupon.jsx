@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
 import CustomInput from '../../components/common/InputField';
+import { couponCreateSchema } from '../../utils/validators';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 function CreateCoupon() {
+    const { control, handleSubmit, formState: { errors }, reset } = useForm({
+        resolver: yupResolver(couponCreateSchema),
+    });
     const [couponData, setCouponData] = useState({
         name: '',
         discoutOff: 0,
@@ -16,7 +22,7 @@ function CreateCoupon() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const onSubmit = (e) => {
         e.preventDefault();
         console.log('couponData', couponData)
 
@@ -27,27 +33,55 @@ function CreateCoupon() {
                 <h2 className="text-3xl grid justify-items-center mb-4">Create Coupon-code</h2>
             </div>
 
-            <form onSubmit={handleSubmit} className="max-w-xl mx-auto mt-6">
-                <CustomInput
-                    id="name"
+            <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto mt-6">
+
+                <Controller
                     name="name"
-                    value={couponData.name}
-                    onChange={handleChange}
-                    label="Name"
+                    control={control}
+                    render={({ field }) => (
+                        <CustomInput
+                            id="name"
+                            name="name"
+                            value={field.value}
+                            onChange={field.onChange}
+                            label="Name"
+                            error={errors.name}
+                        />
+
+                    )}
+
                 />
-                <CustomInput
-                    id="discoutOff"
-                    name="discoutOff"
-                    value={couponData.discoutOff}
-                    onChange={handleChange}
-                    label="DiscoutOff"
+
+                <Controller
+                    name='discoutOff'
+                    control={control}
+                    render={({ field }) => (
+                        <CustomInput
+                            id="discoutOff"
+                            name="discoutOff"
+                            value={field.value}
+                            onChange={field.onChange}
+                            label="DiscoutOff"
+                            error={errors.discoutOff}
+                        />
+
+                    )}
                 />
-                <CustomInput
-                    id="codeName"
-                    name="codeName"
-                    value={couponData.codeName}
-                    onChange={handleChange}
-                    label="CodeName"
+
+                <Controller
+                    name='codeName'
+                    control={control}
+                    render={({ field }) => (
+                        <CustomInput
+                            id="codeName"
+                            name="codeName"
+                            value={field.value}
+                            onChange={handleChange}
+                            label="CodeName"
+                            error={errors.codeName}
+                        />
+
+                    )}
                 />
 
 

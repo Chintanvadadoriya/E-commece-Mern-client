@@ -26,7 +26,7 @@ function Model({  isOpen, close }) {
 
                         <div class="flex justify-end">
                           <Cancel close={close}/>
-                          <Update Update={"Update"}/>
+                          <Update Update={"Update Track"}/>
                             
                         </div>
                     </div>

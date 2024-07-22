@@ -43,3 +43,18 @@ export const productUpdateSchema = yup.object().shape({
   AvailableOffers: yup.string().required('Available Offers are required')
 });
 
+export const couponCreateSchema = yup.object().shape({
+  name: yup.string().required('Name is required'),
+  discoutOff: yup.number().required('discoutOff is required'),
+  codeName: yup.string().required('codeName is required'),
+});
+
+export const changePasswordSchema = yup.object().shape({
+  currentPassword: yup.string().required('currentPassword is required'),
+  newPassword: yup.string().required('newPassword is required'),
+});
+
+export const updateProfileSchema = yup.object().shape({
+  image: yup.string().required('Image URL is required'),
+  name: yup.string().required('Name is required'),
+});
