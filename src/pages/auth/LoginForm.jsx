@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, UserData } from '../../redux/authSlice';
+import useToast from '../../hook/useToaster';
 
 
 const loginSchema = yup.object().shape({
@@ -14,6 +15,7 @@ const loginSchema = yup.object().shape({
   });
 
 const LoginForm = () => {
+  const showToast = useToast();
 const navigate = useNavigate();
 const dispatch = useDispatch();
 const userdata = useSelector(UserData);
@@ -25,10 +27,13 @@ const userdata = useSelector(UserData);
     resolver: yupResolver(loginSchema),
   });
   const onSubmit = async(data) => {
+
     try{
      let {payload}=await dispatch(login(data))
+    
      if(payload?.userData){
        navigate('/dashboard');
+       showToast('success', 'You have successfully login.');
      }
     }catch(error){
       console.error('err1612199',error)

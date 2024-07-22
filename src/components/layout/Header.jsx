@@ -4,9 +4,11 @@ import ModelChangePassword from '../common/ModelChangePassword';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../redux/authSlice';
 import { useDispatch } from 'react-redux';
+import useToast from '../../hook/useToaster';
 
 const Header = ({ toggleSidebar, isOpen }) => {
   const dispatch = useDispatch();
+  const showToast=useToast()
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -58,6 +60,7 @@ const Header = ({ toggleSidebar, isOpen }) => {
   const LogoutUser = (e) => {
     e.preventDefault()
     dispatch(logout());
+    showToast('success', 'You have successfully Logout!.');
     navigate('/login');
   };
 

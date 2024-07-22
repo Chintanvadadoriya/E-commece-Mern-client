@@ -18,6 +18,7 @@ import store from './store';
 import { AuthProvider } from './pages/auth/AuthContext';
 import PublicRoute from './pages/auth/PublicRoute';
 import ProtectedRoute from './pages/auth/ProtectedRoute';
+import 'rsuite/dist/rsuite.min.css';
 
 const AppRoutes = () => {
   return (
