@@ -8,7 +8,7 @@ import useToast from '../../hook/useToaster';
 
 const Header = ({ toggleSidebar, isOpen }) => {
   const dispatch = useDispatch();
-  const showToast=useToast()
+  const showToast = useToast()
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -97,24 +97,12 @@ const Header = ({ toggleSidebar, isOpen }) => {
             )}
           </span>
           <span ref={dropdownRef}>
-            <svg
+            <img
+              alt='no img'
+              src='https://t3.ftcdn.net/jpg/02/35/66/18/240_F_235661801_1OQkjM3o8zAtgnhdbPsRXKhs82a7XIkO.jpg' // Use a high-resolution image
               onClick={handleUserIconClick}
-              className="w-[32px] h-[32px] text-gray-800 dark:text-white cursor-pointer text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-              />
-            </svg>
+              className="w-[40px] h-[40px] text-gray-800 dark:text-white cursor-pointer rounded-full border-2 border-gray-300 shadow-lg transition-transform transform hover:scale-110 object-cover"
+            />
 
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20 transition duration-200 ease-in-out transform opacity-100 scale-100">
