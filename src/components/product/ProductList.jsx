@@ -44,7 +44,6 @@ const ProductTable = ({ isLargeScreen }) => {
   const closeModal = () => setModalOpen(false);
 
   const updateProduct = (id) => {
-    console.log('id1612199', id)
     navigate(`/update-product/${id}`)
   }
 

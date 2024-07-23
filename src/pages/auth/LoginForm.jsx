@@ -15,10 +15,11 @@ const loginSchema = yup.object().shape({
   });
 
 const LoginForm = () => {
-  const showToast = useToast();
+  const {loading}=useSelector(UserData)
+
+const showToast = useToast();
 const navigate = useNavigate();
 const dispatch = useDispatch();
-const userdata = useSelector(UserData);
   const {
     register,
     handleSubmit,
@@ -33,7 +34,8 @@ const userdata = useSelector(UserData);
       if (result.meta.requestStatus === 'fulfilled') {
         const { payload } = result;
         if (payload?.userData) {
-          navigate('/dashboard');
+          payload?.userType==='admin'?
+          navigate('/dashboard'):navigate('/admin-list');
           showToast('success', 'You have successfully logged in.');
         }
       } else {
@@ -50,12 +52,13 @@ const userdata = useSelector(UserData);
       <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mb-4">
           <label className="block text-gray-700 text-lg mb-1">User Type</label>
-          <input
-            type="text"
-            value='admin'
+          <select
             {...register('userType')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          >
+            <option value="superAdmin">Super Admin</option>
+            <option value="admin">Admin</option>
+          </select>
           {errors.userType && <p className="text-red-600">{errors.userType.message}</p>}
         </div>
 
@@ -85,12 +88,12 @@ const userdata = useSelector(UserData);
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-6 rounded-lg text-lg hover:bg-blue-700 transition duration-200"
         >
-          {/* {`${loading ? 'Loading...':'Login'}`} */}Login
+          {`${loading ? 'Loading...':'Login'}`}
         </button>
       </form>
       <div className="text-center mt-4">
         <p className="text-gray-700 text-lg">Don't have an account? <strong>contect to Super admin</strong>  </p>
-        <Link to="/" className="text-blue-600 text-lg hover:underline">
+        <Link to='/' className="text-blue-600 text-lg hover:underline">
         superAdmin@gmail.com
         </Link>
       </div>

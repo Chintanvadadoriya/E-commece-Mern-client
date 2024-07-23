@@ -1,4 +1,4 @@
-
+import {jwtDecode} from 'jwt-decode';
 
 export const CheckActiveOrNot = (data) => {
   let result
@@ -6,9 +6,6 @@ export const CheckActiveOrNot = (data) => {
     <span class="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">InActive</span>
   return result
 }
-
-
-
 
 export function formatDate(timestamp) {
   const date = new Date(timestamp * 1000); // Convert timestamp to milliseconds
@@ -102,5 +99,20 @@ export const productdata = {
   "updatedAt": "2024-07-09T06:54:04.278Z",
   "__v": 0
 }
+
+
+
+
+export const decodeToken = (token) => {
+  try {
+    const decoded = jwtDecode(token);
+
+    return decoded.user;
+  } catch (error) {
+    console.error("Failed to decode token", error);
+    return null;
+  }
+};
+
 
 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AiOutlineBars } from 'react-icons/ai';
-import ModelChangePassword from '../common/ModelChangePassword';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../../redux/authSlice';
 import { useDispatch } from 'react-redux';
-import useToast from '../../hook/useToaster';
+import ModelChangePassword from '../../common/ModelChangePassword';
+import useToast from '../../../hook/useToaster';
+import { logout } from '../../../redux/authSlice';
 
-const Header = ({ toggleSidebar, isOpen }) => {
+const AdminHeader = ({ toggleSidebar, isOpen }) => {
   const dispatch = useDispatch();
   const showToast = useToast()
 
@@ -119,4 +119,4 @@ const Header = ({ toggleSidebar, isOpen }) => {
   );
 };
 
-export default Header;
+export default AdminHeader;
