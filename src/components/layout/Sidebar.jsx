@@ -6,27 +6,41 @@ const Sidebar = ({ toggleSidebar, isOpen, setIsOpen }) => {
     const [productsOpen, setProductsOpen] = useState(false);
     const [ordersOpen, setOrdersOpen] = useState(false);
     const [couponCodeOpen, setCouponCodeOpen] = useState(false);
+    const [adminOpen, setAdminOpen] = useState(false);
+
 
 
     const toggleProducts = () => {
         setProductsOpen(!productsOpen);
         if (ordersOpen) setOrdersOpen(false);
         if(couponCodeOpen) setCouponCodeOpen(false)
+        if(adminOpen) setAdminOpen(false)
+
     };
 
     const toggleOrders = () => {
         setOrdersOpen(!ordersOpen);
         if (productsOpen) setProductsOpen(false);
         if(couponCodeOpen) setCouponCodeOpen(false)
+        if(adminOpen) setAdminOpen(false)
+
+
 
     };
     const toggleCouponCodeOpen = () => {
         setCouponCodeOpen(!couponCodeOpen);
         if (productsOpen) setProductsOpen(false);
         if (ordersOpen) setOrdersOpen(false);
-
+        if(adminOpen) setAdminOpen(false)
     };
 
+    const toggleAdminOpen = () => {
+        setAdminOpen(!adminOpen);
+        if (productsOpen) setProductsOpen(false);
+        if (ordersOpen) setOrdersOpen(false);
+        if(couponCodeOpen) setCouponCodeOpen(false)
+
+    };
 
     return (
         <aside className={`bg-gray-800 text-white ${isOpen ? 'w-64' : 'w-0'} fixed h-full top-0 left-0 overflow-y-auto transition-all duration-300 ease-in-out z-50`}>
@@ -35,7 +49,18 @@ const Sidebar = ({ toggleSidebar, isOpen, setIsOpen }) => {
           </div>
             <div className="p-4 pt-11 pl-10">
                 <Link to="/dashboard" className="block mb-4">Dashboard</Link>
-                
+                <div className="mb-4">
+                    <div className="flex justify-between items-center cursor-pointer" onClick={toggleAdminOpen}>
+                        <span className="block">Admin Manage</span>
+                        <AiOutlineDown className={`ml-1 ${adminOpen ? 'transform rotate-180' : ''}`} />
+                    </div>
+                    {adminOpen && (
+                        <div className="mt-4 pl-4">
+                            <Link to="/admin-create" className="block mb-3">Admin Create</Link>
+                            <Link to="/admin-list" className="block mb-3">Admin List</Link>
+                        </div>
+                    )}
+                </div>
                 <div className="mb-4">
                     <div className="flex justify-between items-center cursor-pointer" onClick={toggleProducts}>
                         <span className="block">Products</span>

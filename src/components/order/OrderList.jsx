@@ -127,7 +127,6 @@ const OrderTable = ({ isLargeScreen }) => {
                   <td className="px-6 py-4">
                     <div className="flex">
                       <Edite openModal={openModal}/>
-                    
                     </div>
                   </td>
                 </tr>

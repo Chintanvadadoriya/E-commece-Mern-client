@@ -19,6 +19,7 @@ import { AuthProvider } from './pages/auth/AuthContext';
 import PublicRoute from './pages/auth/PublicRoute';
 import ProtectedRoute from './pages/auth/ProtectedRoute';
 import 'rsuite/dist/rsuite.min.css';
+import AdminListTable from './pages/super-admin/AdminList';
 
 const AppRoutes = () => {
   return (
@@ -27,10 +28,12 @@ const AppRoutes = () => {
         <Router>
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<PublicRoute><PublicLayout><SignupForm /></PublicLayout></PublicRoute>} />
-            <Route path="/login" element={<PublicRoute><PublicLayout><LoginForm /></PublicLayout></PublicRoute>} />
+            {/* <Route path="/admin-create" element={<PublicRoute><PublicLayout><SignupForm /></PublicLayout></PublicRoute>} /> */}
+            <Route path="/" element={<PublicRoute><PublicLayout><LoginForm /></PublicLayout></PublicRoute>} />
 
             {/* Private Routes */}
+            <Route path="/admin-create" element={<ProtectedRoute><MainLayout><SignupForm /></MainLayout></ProtectedRoute>} />
+            <Route path="/admin-list" element={<ProtectedRoute><MainLayout><AdminListTable/></MainLayout></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><MainLayout><Dashboard /></MainLayout></ProtectedRoute>} />
             <Route path="/products-list" element={<ProtectedRoute><MainLayout><ProductList /></MainLayout></ProtectedRoute>} />
             <Route path="/products-create" element={<ProtectedRoute><MainLayout><ProductCreate /></MainLayout></ProtectedRoute>} />

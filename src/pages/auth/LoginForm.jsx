@@ -89,9 +89,9 @@ const userdata = useSelector(UserData);
         </button>
       </form>
       <div className="text-center mt-4">
-        <p className="text-gray-700 text-lg">Don't have an account?</p>
+        <p className="text-gray-700 text-lg">Don't have an account? <strong>contect to Super admin</strong>  </p>
         <Link to="/" className="text-blue-600 text-lg hover:underline">
-          Sign up
+        superAdmin@gmail.com
         </Link>
       </div>
     </div>

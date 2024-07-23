@@ -29,12 +29,12 @@ const SignupForm = () => {
 
   const onSubmit = (data) => {
     console.log(data);
-    navigate('/login')
+    navigate('/')
   };
 
   return (
     <div className="w-full max-w-lg mx-auto p-4 bg-slate-300 bg-opacity-60 shadow-lg rounded-lg">
-      <h2 className="text-3xl font-bold mb-4 text-center">Signup Form</h2>
+      <h2 className="text-3xl font-bold mb-4 text-center">Admin Create</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <label className="block text-gray-700 text-lg mb-1">Name</label>
@@ -91,15 +91,15 @@ const SignupForm = () => {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-6 rounded-lg text-lg hover:bg-blue-700 transition duration-200"
         >
-          Signup
+          Create Admin
         </button>
       </form>
-      <div className="text-center mt-4">
+      {/* <div className="text-center mt-4">
         <p className="text-gray-700 text-lg">Already logged in?</p>
         <Link to="/login" className="text-blue-600 text-lg hover:underline">
           Log in
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 };
