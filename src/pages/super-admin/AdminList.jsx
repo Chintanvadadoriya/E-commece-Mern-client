@@ -8,9 +8,13 @@ import DeleteModel from '../../components/common/DeleteModel';
 import { AdminDetails, fetchAdmins } from '../../redux/adminSlice'; // Adjust the path
 import { UserData } from '../../redux/authSlice';
 import useDebounce from '../../hook/useDebounce';
+import { adminUpdateApi } from '../../services/authService';
+import { getAuthHeader } from '../../constant';
+import useToast from '../../hook/useToaster';
 
 const AdminListTable = () => {
     const dispatch = useDispatch();
+    const showToast = useToast();
     const { data, status, error, totalPages, totalCount, currentCount } = useSelector(AdminDetails);
     const { token } = useSelector(UserData);
     const [searchQuery, setSearchQuery] = useState('');
@@ -44,37 +48,55 @@ const AdminListTable = () => {
     const isLargeScreen = window.innerWidth > 1024;
     const [isModalOpen, setModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [adminId, setAdminId] = useState();
 
-    const openModal = () => setModalOpen(true);
+
+    const openModal = (admin) => {
+        setAdminId(admin);
+        setModalOpen(true);
+    };
     const closeModal = () => setModalOpen(false);
     const openDeleteModal = () => setIsDeleteModalOpen(true);
     const closeDeleteModal = () => setIsDeleteModalOpen(false);
 
-    const updateAdmin = () => {
-        // Update admin logic here
+
+    const handleUpdateAdmin = async (AdminData) => {
+        try {
+            let {data,status} = await adminUpdateApi(AdminData, getAuthHeader(token))
+            if(status===200){
+                showToast('success', `${data}`);
+                dispatch(fetchAdmins({ searchQuery: debouncedSearchQuery, page, limit, name, token }))
+                closeModal()
+            }else{
+                showToast('error', `${data}`);
+            }
+        } catch (error) {
+            showToast('error', `something went wrong!`);
+            console.log('error', error)
+        }
     };
 
     return (
         <div className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6`}>
             <h1 className="text-2xl font-semibold mb-6 flex justify-center mb-10">Admin List</h1>
             <div className='mb-4 flex justify-between'>
-            <SearchItem handleSearch={handleSearch} />
-            <div>
-                <label htmlFor="limit" className="mb-1 block text-sm font-medium text-gray-700">
-                    Items per page:
-                </label>
-                <select
-                    id="limit"
-                    name="limit"
-                    value={limit}
-                    onChange={handleLimitChange}
-                    className="block w-[100%] p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                </select>
-            </div>
+                <SearchItem handleSearch={handleSearch} />
+                <div>
+                    <label htmlFor="limit" className="mb-1 block text-sm font-medium text-gray-700">
+                        Items per page:
+                    </label>
+                    <select
+                        id="limit"
+                        name="limit"
+                        value={limit}
+                        onChange={handleLimitChange}
+                        className="block w-[100%] p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                    </select>
+                </div>
 
             </div>
 
@@ -124,7 +146,7 @@ const AdminListTable = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex">
-                                        <EditeAdmin openModal={openModal} />
+                                        <EditeAdmin openModal={() => openModal(admin)} />
                                         <Delete openDeleteModal={openDeleteModal} />
                                     </div>
                                 </td>
@@ -169,7 +191,7 @@ const AdminListTable = () => {
                     </ul>
                 </nav>
             </div>
-            <ModelAdminUpdate isOpen={isModalOpen} close={closeModal} />
+            <ModelAdminUpdate isOpen={isModalOpen} close={closeModal} adminId={adminId} onUpdate={handleUpdateAdmin} />
             <DeleteModel type='adminModel' isOpen={isDeleteModalOpen} close={closeDeleteModal} />
         </div>
     );

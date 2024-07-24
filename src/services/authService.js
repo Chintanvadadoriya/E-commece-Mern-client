@@ -39,3 +39,17 @@ export const adminListApi = async ({ searchQuery = null, page, limit, name = nul
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+export const adminUpdateApi = async (payload,token) => {
+  console.log('payload adminUpdateApi', payload)
+  try {
+    const url = `${routerPath.adminUpdate}/${payload?.id}`;
+    
+    const response = await api.put(url,payload,token);
+  
+    return {data:response?.data?.message,status:response?.status};
+  } catch (error) {
+    console.error('adminUpdateApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
