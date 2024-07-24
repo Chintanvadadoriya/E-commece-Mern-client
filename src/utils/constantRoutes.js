@@ -4,5 +4,6 @@ export const loginPath={
 }
 
 export const routerPath={
-    adminCreate:'/super-admin/register'
+    adminCreate:'/super-admin/register',
+    adminList:'/super-admin/all-admin'
 }

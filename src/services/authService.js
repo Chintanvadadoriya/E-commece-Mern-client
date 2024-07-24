@@ -16,13 +16,26 @@ export const loginApi = async (payload) => {
   }
 };
 
-export const adminCreateApi = async (payload,token) => {
-console.log('payload,token', payload,token)
+export const adminCreateApi = async (payload, token) => {
   try {
-    const response = await api.post(routerPath.adminCreate, payload,token);
-    return {data:response?.data,status:response?.status};
+    const response = await api.post(routerPath.adminCreate, payload, token);
+    return { data: response?.data, status: response?.status };
   } catch (error) {
     console.error('adminCreateApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const adminListApi = async ({ searchQuery = null, page, limit, name = null, token }) => {
+  try {
+    const url = `${routerPath.adminList}?searchQuery=${searchQuery}&page=${page}&limit=${limit}&name=${name}`;
+    
+
+    const response = await api.post(url, {}, token);
+    console.log('response', response)
+    return { data: response?.data, status: response?.status };
+  } catch (error) {
+    console.error('adminListApi 1612199', error)
     throw new Error(error?.response?.data?.msg);
   }
 };

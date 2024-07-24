@@ -1,66 +1,47 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import SearchItem from '../../components/common/SearchItem';
 import { CheckActiveOrNot, formatDate } from '../../utils/helpers';
 import { Delete, EditeAdmin } from '../../components/common/Button';
 import ModelAdminUpdate from '../../components/common/ModelAdminUpdate';
 import DeleteModel from '../../components/common/DeleteModel';
-
-const tableData = [
-    {
-        id: 1,
-        productName: 'Wireless Mouse',
-        color: 'Black',
-        category: 'Electronics',
-        price: '$25',
-        action: 'Buy Now'
-    },
-
-    {
-        id: 2,
-        productName: 'Bluetooth Speaker',
-        color: 'Red',
-        category: 'Electronics',
-        price: '$45',
-        action: 'Add to Cart'
-    },
-    {
-        id: 3,
-        productName: 'Gaming Keyboard',
-        color: 'RGB',
-        category: 'Electronics',
-        price: '$75',
-        action: 'Buy Now'
-    },
-    {
-        id: 4,
-        productName: 'Running Shoes',
-        color: 'Blue',
-        category: 'Footwear',
-        price: '$60',
-        action: 'Add to Cart'
-    },
-    {
-        id: 5,
-        productName: 'Leather Wallet',
-        color: 'Brown',
-        category: 'Accessories',
-        price: '$30',
-        action: 'Buy Now'
-    },
-    {
-        id: 6,
-        productName: 'Cotton T-shirt',
-        color: 'White',
-        category: 'Apparel',
-        price: '$20',
-        action: 'Add to Cart'
-    }
-];
-
-
+import { AdminDetails, fetchAdmins } from '../../redux/adminSlice'; // Adjust the path
+import { UserData } from '../../redux/authSlice';
+import useDebounce from '../../hook/useDebounce';
 
 const AdminListTable = () => {
-    const isLargeScreen = window.innerWidth > 1024
+    const dispatch = useDispatch();
+    const { data, status, error, totalPages, totalCount, currentCount } = useSelector(AdminDetails);
+    const { token } = useSelector(UserData);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(5); // Default limit set to 10
+    const [name, setName] = useState('');
+
+
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+
+    useEffect(() => {
+        dispatch(fetchAdmins({ searchQuery: debouncedSearchQuery, page, limit, name, token }));
+    }, [dispatch, page, limit, name, token, debouncedSearchQuery]);
+
+    const handleSearch = (e) => {
+        setSearchQuery(e.target.value);
+        console.log('Search Admin', e.target.value)
+        setPage(1); // Reset to first page on new search
+    };
+
+    const handleLimitChange = (e) => {
+        setLimit(parseInt(e.target.value));
+        setPage(1); // Reset to first page on new limit
+    };
+
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+    };
+
+    const isLargeScreen = window.innerWidth > 1024;
     const [isModalOpen, setModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -70,106 +51,127 @@ const AdminListTable = () => {
     const closeDeleteModal = () => setIsDeleteModalOpen(false);
 
     const updateAdmin = () => {
-
-    }
+        // Update admin logic here
+    };
 
     return (
-
         <div className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6`}>
             <h1 className="text-2xl font-semibold mb-6 flex justify-center mb-10">Admin List</h1>
-            <SearchItem />
+            <div className='mb-4 flex justify-between'>
+            <SearchItem handleSearch={handleSearch} />
+            <div>
+                <label htmlFor="limit" className="mb-1 block text-sm font-medium text-gray-700">
+                    Items per page:
+                </label>
+                <select
+                    id="limit"
+                    name="limit"
+                    value={limit}
+                    onChange={handleLimitChange}
+                    className="block w-[100%] p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                </select>
+            </div>
 
+            </div>
 
-            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-
-                            <th scope="col" class="px-6 py-3">
-                                Product name
+                            <th scope="col" className="px-6 py-3">
+                                Name
                             </th>
-                            <th scope="col" class="px-6 py-3">
-                                Color
+                            <th scope="col" className="px-6 py-3">
+                                Email
                             </th>
-                            <th scope="col" class="px-6 py-3">
-                                Category
+                            <th scope="col" className="px-6 py-3">
+                                Is Verified
                             </th>
-                            <th scope="col" class="px-6 py-3">
-                                Price
+                            <th scope="col" className="px-6 py-3">
+                                Is Active / Is Blocked
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" className="px-6 py-3">
+                                Credet Amount
+                            </th>
+                            <th scope="col" className="px-6 py-3">
                                 Action
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {
-                            tableData.map((data) => {
-                                return (
-                                    <>
-                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-
-                                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                {data.productName}
-                                            </th>
-                                            <td class="px-6 py-4">
-                                                {data.color}
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                {data.category}
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                {data.price}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex">
-                                                    <EditeAdmin openModal={openModal} />
-                                                    <Delete openDeleteModal={openDeleteModal}/>
-
-                                                </div>
-                                            </td>
-
-                                        </tr>
-                                        <ModelAdminUpdate  isOpen={isModalOpen} close={closeModal} />
-                                        <DeleteModel type='adminModel' isOpen={isDeleteModalOpen} close={closeDeleteModal}/>
-                                    </>
-                                )
-                            })
-                        }
-
+                        {status === 'loading' && <tr><td colSpan="5">Loading...</td></tr>}
+                        {status === 'failed' && <tr><td colSpan="5">Error: {error}</td></tr>}
+                        {status === 'succeeded' && data.map((admin, index) => (
+                            <tr key={admin?._id + index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {admin.name}
+                                </th>
+                                <td className="px-6 py-4">
+                                    {admin.email}
+                                </td>
+                                <td className={`px-6 py-4 ${admin.isVerified ? "text-green-500" : "text-rose-600"} `}>
+                                    {admin.isVerified ? 'Yes' : 'No'}
+                                </td>
+                                <td className={`px-6 py-4 ${!admin.isBlock ? "text-green-500" : "text-rose-600"} `}>
+                                    {admin.isBlock ? 'in Active' : 'Active'}
+                                </td>
+                                <td className={`px-6 py-4 ${admin.totalPaidAmount > 0 ? "text-green-500" : "text-rose-600"} `}>
+                                    {admin.totalPaidAmount}
+                                </td>
+                                <td className="px-6 py-4">
+                                    <div className="flex">
+                                        <EditeAdmin openModal={openModal} />
+                                        <Delete openDeleteModal={openDeleteModal} />
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
-                <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
-                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">Showing <span class="font-semibold text-gray-900 dark:text-white">1-10</span> of <span class="font-semibold text-gray-900 dark:text-white">1000</span></span>
-                    <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+                <nav className="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
+                    <span className="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+                        Showing <span className="font-semibold text-gray-900 dark:text-white">{(page - 1) * limit + 1}-{Math.min(page * limit, currentCount)}</span> of <span className="font-semibold text-gray-900 dark:text-white">{currentCount}</span>
+                    </span>
+                    <span>Total Admin :  <strong>{totalCount}</strong> </span>
+                    <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
                         <li>
-                            <a href="#" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+                            <button
+                                onClick={() => handlePageChange(page - 1)}
+                                disabled={page === 1}
+                                className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                            >
+                                Previous
+                            </button>
                         </li>
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <li key={index}>
+                                <button
+                                    onClick={() => handlePageChange(index + 1)}
+                                    className={`flex items-center justify-center px-3 h-8 leading-tight ${page === index + 1 ? 'text-blue-600 border border-gray-300 bg-blue-50' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'}`}
+                                >
+                                    {index + 1}
+                                </button>
+                            </li>
+                        ))}
                         <li>
-                            <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-                        </li>
-                        <li>
-                            <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-                        </li>
-                        <li>
-                            <a href="#" aria-current="page" class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-                        </li>
-                        <li>
-                            <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
-                        </li>
-                        <li>
-                            <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
-                        </li>
-                        <li>
-                            <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+                            <button
+                                onClick={() => handlePageChange(page + 1)}
+                                disabled={page === totalPages}
+                                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                            >
+                                Next
+                            </button>
                         </li>
                     </ul>
                 </nav>
             </div>
-
+            <ModelAdminUpdate isOpen={isModalOpen} close={closeModal} />
+            <DeleteModel type='adminModel' isOpen={isDeleteModalOpen} close={closeDeleteModal} />
         </div>
-
-
     );
 };
 

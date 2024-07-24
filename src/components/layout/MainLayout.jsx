@@ -27,7 +27,6 @@ const MainLayout = ({ children }) => {
   const HeaderComponent = userDataDecode?.userType === 'superAdmin' ? AdminHeader : Header;
   const FooterComponent = userDataDecode?.userType === 'superAdmin' ? AdminFooter : Footer;
 
- console.log('SidebarComponent', userDataDecode?.userType === 'superAdmin')
   return (
     <div className="flex h-screen">
       <SidebarComponent setIsOpen={setIsOpen} isOpen={isOpen} toggleSidebar={toggleSidebar} />
