@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
+import { adminCreateApi } from '../../services/authService';
+import { useSelector } from 'react-redux';
+import { UserData } from '../../redux/authSlice';
+import useToast from '../../hook/useToaster';
+import { getAuthHeader } from '../../constant';
 
 
 // Validation schema
@@ -18,18 +23,35 @@ const schema = yup.object().shape({
 });
 
 const SignupForm = () => {
-  const navigate=useNavigate()
+  const { token } = useSelector(UserData)
+  const showToast = useToast();
+  const [loading, setLoding] = useState(false)
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
-    navigate('/')
+  const onSubmit = async (admindata) => {
+    setLoding(true)
+    try {
+      const { data, status } = await adminCreateApi(admindata,getAuthHeader(token));
+      if (data && status === 200) {
+        showToast('success', `${data.msg}`);
+        reset()
+      } else {
+        showToast('error', `${data.msg}`);
+      }
+      setLoding(false)
+    } catch (error) {
+      showToast('error', `${error.message}`);
+      console.error('err1612199', error.message)
+      setLoding(false)
+    }
+
   };
 
   return (
@@ -50,7 +72,7 @@ const SignupForm = () => {
           <label className="block text-gray-700 text-lg mb-1">User Type</label>
           <input
             type="text"
-            value='Admin'
+            value='admin'
             {...register('userType')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
@@ -91,7 +113,7 @@ const SignupForm = () => {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-6 rounded-lg text-lg hover:bg-blue-700 transition duration-200"
         >
-          Create Admin
+          {loading?"Loading...":'Create Admin'}
         </button>
       </form>
       {/* <div className="text-center mt-4">
