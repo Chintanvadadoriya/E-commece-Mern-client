@@ -1,8 +1,15 @@
 import React from 'react';
 
-function DeleteModel({ isOpen, close,type }) {
+function DeleteModel({ isOpen, close,type,adminId,onUpdate }) {
     if (!isOpen) return null;
     let data=type==='adminModel'? "Admin":"Item"
+
+    function handleDelete(){
+        onUpdate({
+            id:adminId
+          });
+    }
+    
     return (
         <>
             <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black bg-opacity-20">
@@ -25,6 +32,7 @@ function DeleteModel({ isOpen, close,type }) {
                                 No, cancel
                             </button>
                             <button 
+                             onClick={handleDelete}
                                 type="submit" 
                                 className="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">
                                 Yes, I'm sure

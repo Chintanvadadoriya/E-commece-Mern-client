@@ -32,7 +32,7 @@ export const adminListApi = async ({ searchQuery = null, page, limit, name = nul
     
 
     const response = await api.post(url, {}, token);
-    console.log('response', response)
+
     return { data: response?.data, status: response?.status };
   } catch (error) {
     console.error('adminListApi 1612199', error)
@@ -41,7 +41,6 @@ export const adminListApi = async ({ searchQuery = null, page, limit, name = nul
 };
 
 export const adminUpdateApi = async (payload,token) => {
-  console.log('payload adminUpdateApi', payload)
   try {
     const url = `${routerPath.adminUpdate}/${payload?.id}`;
     
@@ -50,6 +49,18 @@ export const adminUpdateApi = async (payload,token) => {
     return {data:response?.data?.message,status:response?.status};
   } catch (error) {
     console.error('adminUpdateApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const adminDeleteApi = async (payload,token) => {
+  try {
+    const url = `${routerPath.adminDelete}/${payload?.id?._id}`;
+    
+    const response = await api.delete(url,token);
+    return {data:response?.data?.message,status:response?.status};
+  } catch (error) {
+    console.error('adminDeleteApi 1612199', error)
     throw new Error(error?.response?.data?.msg);
   }
 };

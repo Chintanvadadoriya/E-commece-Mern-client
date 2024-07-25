@@ -8,7 +8,7 @@ import DeleteModel from '../../components/common/DeleteModel';
 import { AdminDetails, fetchAdmins } from '../../redux/adminSlice'; // Adjust the path
 import { UserData } from '../../redux/authSlice';
 import useDebounce from '../../hook/useDebounce';
-import { adminUpdateApi } from '../../services/authService';
+import { adminDeleteApi, adminUpdateApi } from '../../services/authService';
 import { getAuthHeader } from '../../constant';
 import useToast from '../../hook/useToaster';
 import Loader from '../../components/Loader';
@@ -57,9 +57,12 @@ const AdminListTable = () => {
         setModalOpen(true);
     };
     const closeModal = () => setModalOpen(false);
-    const openDeleteModal = () => setIsDeleteModalOpen(true);
     const closeDeleteModal = () => setIsDeleteModalOpen(false);
-
+    
+    const openDeleteModal = (admin) =>{
+        setAdminId(admin);
+        setIsDeleteModalOpen(true)
+    }
 
     const handleUpdateAdmin = async (AdminData) => {
         try {
@@ -68,6 +71,24 @@ const AdminListTable = () => {
                 showToast('success', `${data}`);
                 dispatch(fetchAdmins({ searchQuery: debouncedSearchQuery, page, limit, name, token }))
                 closeModal()
+            } else {
+                showToast('error', `${data}`);
+            }
+        } catch (error) {
+            showToast('error', `something went wrong!`);
+            console.log('error', error)
+        }
+    };
+
+
+    const handleDeleteAdmin = async (AdminData) => {
+       
+        try {
+            let { data, status } = await adminDeleteApi(AdminData, getAuthHeader(token))
+            if (status === 200) {
+                showToast('success', `${data}`);
+                dispatch(fetchAdmins({ searchQuery: debouncedSearchQuery, page, limit, name, token }))
+                closeDeleteModal()
             } else {
                 showToast('error', `${data}`);
             }
@@ -161,7 +182,7 @@ const AdminListTable = () => {
                                 <td className="px-6 py-4">
                                     <div className="flex">
                                         <EditeAdmin openModal={() => openModal(admin)} />
-                                        <Delete openDeleteModal={openDeleteModal} />
+                                        <Delete openDeleteModal={() => openDeleteModal(admin)} />
                                     </div>
                                 </td>
                             </tr>
@@ -206,7 +227,7 @@ const AdminListTable = () => {
                 </nav>
             </div>
             <ModelAdminUpdate isOpen={isModalOpen} close={closeModal} adminId={adminId} onUpdate={handleUpdateAdmin} />
-            <DeleteModel type='adminModel' isOpen={isDeleteModalOpen} close={closeDeleteModal} />
+            <DeleteModel type='adminModel' isOpen={isDeleteModalOpen} adminId={adminId}  close={closeDeleteModal} onUpdate={handleDeleteAdmin}/>
         </div>
     );
 };
