@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { UserData } from '../../redux/authSlice';
 import useToast from '../../hook/useToaster';
 import { getAuthHeader } from '../../constant';
+import { Loader } from 'rsuite';
 
 
 // Validation schema
@@ -38,7 +39,7 @@ const SignupForm = () => {
   const onSubmit = async (admindata) => {
     setLoding(true)
     try {
-      const { data, status } = await adminCreateApi(admindata,getAuthHeader(token));
+      const { data, status } = await adminCreateApi(admindata, getAuthHeader(token));
       if (data && status === 200) {
         showToast('success', `${data.msg}`);
         reset()
@@ -113,7 +114,9 @@ const SignupForm = () => {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-6 rounded-lg text-lg hover:bg-blue-700 transition duration-200"
         >
-          {loading?"Loading...":'Create Admin'}
+          {loading?<Loader content="Loading..." />:'Create Admin'}
+         
+          
         </button>
       </form>
       {/* <div className="text-center mt-4">

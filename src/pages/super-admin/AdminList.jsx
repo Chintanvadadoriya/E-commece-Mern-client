@@ -11,6 +11,7 @@ import useDebounce from '../../hook/useDebounce';
 import { adminUpdateApi } from '../../services/authService';
 import { getAuthHeader } from '../../constant';
 import useToast from '../../hook/useToaster';
+import Loader from '../../components/Loader';
 
 const AdminListTable = () => {
     const dispatch = useDispatch();
@@ -62,12 +63,12 @@ const AdminListTable = () => {
 
     const handleUpdateAdmin = async (AdminData) => {
         try {
-            let {data,status} = await adminUpdateApi(AdminData, getAuthHeader(token))
-            if(status===200){
+            let { data, status } = await adminUpdateApi(AdminData, getAuthHeader(token))
+            if (status === 200) {
                 showToast('success', `${data}`);
                 dispatch(fetchAdmins({ searchQuery: debouncedSearchQuery, page, limit, name, token }))
                 closeModal()
-            }else{
+            } else {
                 showToast('error', `${data}`);
             }
         } catch (error) {
@@ -125,8 +126,21 @@ const AdminListTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {status === 'loading' && <tr><td colSpan="5">Loading...</td></tr>}
-                        {status === 'failed' && <tr><td colSpan="5">Error: {error}</td></tr>}
+                        {data?.length === 0 && status !== 'loading' &&(
+                            <tr>
+                                <td colSpan="6" className="text-center p-5 text-sm text-gray-500">No Data Found!</td>
+                            </tr>
+                        )}
+                        {status === 'loading' && (
+                            <tr>
+                                <td colSpan="6" className="text-center p-5 text-sm text-gray-500"><Loader/></td>
+                            </tr>
+                        )}
+                        {status === 'failed' && (
+                            <tr>
+                                <td colSpan="6" className="text-center p-5 text-sm text-red-500">Error: {error}</td>
+                            </tr>
+                        )}
                         {status === 'succeeded' && data.map((admin, index) => (
                             <tr key={admin?._id + index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
