@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, UserData } from '../../redux/authSlice';
 import useToast from '../../hook/useToaster';
+import { Loader } from 'rsuite';
 
 
 const loginSchema = yup.object().shape({
@@ -66,7 +67,7 @@ const dispatch = useDispatch();
           <label className="block text-gray-700 text-lg mb-1">Email</label>
           <input
             type="email"
-            value="superAdmin@gmail.com"
+            value="logisticworkit@gmail.com"
             {...register('email')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
@@ -88,7 +89,7 @@ const dispatch = useDispatch();
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-6 rounded-lg text-lg hover:bg-blue-700 transition duration-200"
         >
-          {`${loading ? 'Loading...':'Login'}`}
+          {loading ? <Loader content="Loading..." />:'Login'}
         </button>
       </form>
       <div className="text-center mt-4">
