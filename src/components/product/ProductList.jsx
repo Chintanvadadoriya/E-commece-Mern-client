@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import SearchItem from '../common/SearchItem';
-import { Delete, Edite, EditeProduct } from '../common/Button';
+import { Delete, EditeProduct } from '../common/Button';
 import { useNavigate } from 'react-router-dom';
 import DeleteModel from '../common/DeleteModel';
-
-
 
 const ProductData = [
   {
@@ -34,20 +32,33 @@ const ProductData = [
     name: " IPhone 10",
     qty: 200,
     price: 66999
+  },
+  {
+    id: 5,
+    src: "https://m.media-amazon.com/images/I/41ik61SaOXL._AC_UF1000,1000_QL80_.jpg",
+    name: " IPhone 10",
+    qty: 200,
+    price: 66999
   }
-]
+];
 
 const ProductTable = ({ isLargeScreen }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3; // Number of items per page
 
   const updateProduct = (id) => {
-    navigate(`/update-product/${id}`)
-  }
+    navigate(`/update-product/${id}`);
+  };
 
+  // Calculate total pages
+  const totalPages = Math.ceil(ProductData.length / itemsPerPage);
 
+  // Get current items
+  const currentItems = ProductData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <>
@@ -77,43 +88,55 @@ const ProductTable = ({ isLargeScreen }) => {
             </thead>
             <tbody>
               {
-                ProductData?.map((data, index) => {
-                  return (
-                    <>
-                      <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                        <td className="p-4">
-                          <img src={data.src} className="w-16 md:w-32 max-w-full max-h-full" alt={data?.name} />
-                        </td>
-                        <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                          {data?.name}
-                        </td>
-                        <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                          {data?.qty}
-                        </td>
-                        <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                          {data?.price}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex">
-                            <EditeProduct updateProduct={updateProduct} id={data?.id} />
-                            <Delete openModal={openModal}/>
-                          </div>
-                        </td>
-                      </tr>
-
-                    </>
-                  )
-                })
+                currentItems.map((data, index) => (
+                  <tr key={data.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <td className="p-4">
+                      <img src={data.src} className="w-16 md:w-32 max-w-full max-h-full" alt={data.name} />
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {data.name}
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {data.qty}
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                      {data.price}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex">
+                        <EditeProduct updateProduct={updateProduct} id={data.id} />
+                        <Delete openModal={openModal} />
+                      </div>
+                    </td>
+                  </tr>
+                ))
               }
             </tbody>
           </table>
         </div>
+        {/* Pagination Controls */}
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="text-gray-700">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
-      <DeleteModel  isOpen={isModalOpen} close={closeModal}/>
-
+      <DeleteModel isOpen={isModalOpen} close={closeModal} />
     </>
-
-
   );
 };
 

@@ -64,3 +64,16 @@ export const adminDeleteApi = async (payload,token) => {
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+
+
+export const productCreateApi = async (payload, token) => {
+  try {
+    const response = await api.post(routerPath.productCreate, payload, token);
+    console.log('response', response)
+    return { data: response?.data, status: response?.status };
+  } catch (error) {
+    console.error('adminCreateApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
