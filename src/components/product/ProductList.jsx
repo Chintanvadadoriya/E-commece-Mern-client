@@ -9,11 +9,14 @@ import { UserData } from '../../redux/authSlice';
 import { fetchProductData, ProductData } from '../../redux/productListSlice';
 import useDebounce from '../../hook/useDebounce';
 import Loader from '../../components/Loader';
+import { getAuthHeader } from '../../constant';
+import { deleteProductApi } from '../../services/authService';
 
 const ProductTable = ({ isLargeScreen }) => {
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
-  const openModal = () => setModalOpen(true);
+  const showToast = useToast();
+
   const closeModal = () => setModalOpen(false);
   const itemsPerPage = 3; // Number of items per page
 
@@ -25,7 +28,13 @@ const ProductTable = ({ isLargeScreen }) => {
   const [maxPrice, setMaxPrice] = useState(null);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
+  const [productId, setProductId] = useState();
 
+
+  const openModal = (id) => {
+    setProductId(id)
+    setModalOpen(true)
+  };
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
@@ -50,7 +59,22 @@ const ProductTable = ({ isLargeScreen }) => {
     setLimit(parseInt(e.target.value));
     setPage(1); // Reset to first page on new limit
   };
-
+  const handleDeleteProduct = async (id) => {
+       
+    try {
+        let { data, status } = await deleteProductApi(id, getAuthHeader(token))
+        if (status === 200) {
+            showToast('success', `${data.msg}`);
+            dispatch(fetchProductData({ searchQuery: debouncedSearchQuery, page, limit, token, minPrice, maxPrice }))
+            closeModal()
+        } else {
+            showToast('error', `${data}`);
+        }
+    } catch (error) {
+        showToast('error', `something went wrong!`);
+        console.log('error', error)
+    }
+};
 
 
   return (
@@ -135,7 +159,7 @@ const ProductTable = ({ isLargeScreen }) => {
                     <td className="px-6 py-4">
                       <div className="flex">
                         <EditeProduct updateProduct={() => updateProduct(product._id)} />
-                        <Delete openModal={openModal} />
+                        <Delete openModal={()=>openModal(product._id)} />
                       </div>
                     </td>
                   </tr>
@@ -165,7 +189,7 @@ const ProductTable = ({ isLargeScreen }) => {
           </button>
         </div>
       </div>
-      <DeleteModel isOpen={isModalOpen} close={closeModal} />
+      <DeleteModel type='productModel' isOpen={isModalOpen} close={closeModal} productId={productId} onUpdate={handleDeleteProduct}/>
     </>
   );
 };

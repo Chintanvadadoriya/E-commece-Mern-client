@@ -13,5 +13,7 @@ export const routerPath={
     productList:'/admin/product/all-products',
     productDetailsById:'/product',
     updatProductById:'/admin/product',
+    deleteProductById:'/admin/product',
+
 
 }

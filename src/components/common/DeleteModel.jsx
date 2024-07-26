@@ -1,12 +1,13 @@
 import React from 'react';
 
-function DeleteModel({ isOpen, close,type,adminId,onUpdate }) {
+function DeleteModel({ isOpen, close,type,adminId,productId,onUpdate }) {
     if (!isOpen) return null;
     let data=type==='adminModel'? "Admin":"Item"
 
+    let Id=type==="adminModel"?adminId : productId
     function handleDelete(){
         onUpdate({
-            id:adminId
+            id:Id
           });
     }
     

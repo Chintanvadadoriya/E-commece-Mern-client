@@ -121,3 +121,15 @@ export const updateProductApi = async (payload,id,token) => {
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+export const deleteProductApi = async (id,token) => {
+  try {
+    const url = `${routerPath.deleteProductById}/${id?.id}`;
+    
+    const response = await api.delete(url,token);
+    return {data:response?.data,status:response?.status};
+  } catch (error) {
+    console.error('deleteProductApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
