@@ -1,70 +1,86 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchItem from '../common/SearchItem';
-import { Delete, EditeProduct } from '../common/Button';
+import { Delete, EditeProduct, EditProduct } from '../common/Button';
 import { useNavigate } from 'react-router-dom';
 import DeleteModel from '../common/DeleteModel';
-
-const ProductData = [
-  {
-    id: 1,
-    src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmd5vjpPZOoTD0Z1IpDvBadjJYNVcgck1IOg&s",
-    name: " IPhone 12",
-    qty: 20,
-    price: 999
-  },
-  {
-    id: 2,
-    src: "https://i.pinimg.com/236x/c7/db/6d/c7db6d290d552b8590d58a7b4460d135.jpg",
-    name: "leptop",
-    qty: 20,
-    price: 25000
-  },
-  {
-    id: 3,
-    src: "https://d2xamzlzrdbdbn.cloudfront.net/products/6aa736a0-7527-4561-956e-f8dccd829c4e_416x416.jpg",
-    name: " IPhone 11",
-    qty: 200,
-    price: 75999
-  },
-  {
-    id: 4,
-    src: "https://m.media-amazon.com/images/I/41ik61SaOXL._AC_UF1000,1000_QL80_.jpg",
-    name: " IPhone 10",
-    qty: 200,
-    price: 66999
-  },
-  {
-    id: 5,
-    src: "https://m.media-amazon.com/images/I/41ik61SaOXL._AC_UF1000,1000_QL80_.jpg",
-    name: " IPhone 10",
-    qty: 200,
-    price: 66999
-  }
-];
+import { useDispatch, useSelector } from 'react-redux';
+import useToast from '../../hook/useToaster';
+import { UserData } from '../../redux/authSlice';
+import { fetchProductData, ProductData } from '../../redux/productListSlice';
+import useDebounce from '../../hook/useDebounce';
+import Loader from '../../components/Loader';
 
 const ProductTable = ({ isLargeScreen }) => {
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3; // Number of items per page
+
+  const dispatch = useDispatch();
+  const { data, status, error, totalPage, totalCount, currentCount } = useSelector(ProductData);
+  const { token } = useSelector(UserData);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [minPrice, setMinPrice] = useState(null);
+  const [maxPrice, setMaxPrice] = useState(null);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+  useEffect(() => {
+    dispatch(fetchProductData({ searchQuery: debouncedSearchQuery, page, limit, token, minPrice, maxPrice }));
+  }, [dispatch, page, limit, itemsPerPage, token, debouncedSearchQuery, minPrice, maxPrice]);
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    console.log('Search product', e.target.value)
+    setPage(1) // Reset to first page on new search
+  };
 
   const updateProduct = (id) => {
     navigate(`/update-product/${id}`);
   };
 
-  // Calculate total pages
-  const totalPages = Math.ceil(ProductData.length / itemsPerPage);
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
 
-  // Get current items
-  const currentItems = ProductData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const handleLimitChange = (e) => {
+    setLimit(parseInt(e.target.value));
+    setPage(1); // Reset to first page on new limit
+  };
+
+
 
   return (
     <>
       <div className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6`}>
         <h1 className="text-2xl font-semibold mb-6 flex justify-center mb-10">Products List</h1>
-        <SearchItem />
+        <div className='mb-4 flex justify-between'>
+          <SearchItem handleSearch={handleSearch} />
+          <div>
+            <label htmlFor="limit" className="mb-1 block text-sm font-medium text-gray-700">
+              Items per page:
+            </label>
+            <select
+              id="limit"
+              name="limit"
+              value={limit}
+              onChange={handleLimitChange}
+              className="block w-[100%] p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+            </select>
+          </div>
+
+        </div>
+        <div>
+          <p>Total Product Data : <strong>{totalCount}</strong></p>
+        </div>
         <div className="overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -73,7 +89,7 @@ const ProductTable = ({ isLargeScreen }) => {
                   <span className="sr-only">Image</span>
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Product
+                  Product Name
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Qty
@@ -87,24 +103,39 @@ const ProductTable = ({ isLargeScreen }) => {
               </tr>
             </thead>
             <tbody>
+              {data?.length === 0 && status !== 'loading' && (
+                <tr>
+                  <td colSpan="6" className="text-center p-5 text-sm text-gray-500">No Data Found!</td>
+                </tr>
+              )}
+              {status === 'loading' && (
+                <tr>
+                  <td colSpan="6" className="text-center p-5 text-sm text-gray-500"><Loader /></td>
+                </tr>
+              )}
+              {status === 'failed' && (
+                <tr>
+                  <td colSpan="6" className="text-center p-5 text-sm text-red-500">Error: {error}</td>
+                </tr>
+              )}
               {
-                currentItems.map((data, index) => (
-                  <tr key={data.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                status === 'succeeded' && data.map((product, index) => (
+                  <tr key={product.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <td className="p-4">
-                      <img src={data.src} className="w-16 md:w-32 max-w-full max-h-full" alt={data.name} />
+                      <img src={product.images[0]} className="w-16 md:w-32 max-w-full max-h-full" alt={product.name} />
                     </td>
                     <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {data.name}
+                      {product.name}
                     </td>
                     <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {data.qty}
+                      {product.stock}
                     </td>
                     <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {data.price}
+                      {product.price}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex">
-                        <EditeProduct updateProduct={updateProduct} id={data.id} />
+                        <EditeProduct updateProduct={() => updateProduct(product.id)} id={product.id} />
                         <Delete openModal={openModal} />
                       </div>
                     </td>
@@ -117,18 +148,18 @@ const ProductTable = ({ isLargeScreen }) => {
         {/* Pagination Controls */}
         <div className="flex justify-between items-center mt-4">
           <button
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page === 1}
             className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
           >
             Previous
           </button>
           <span className="text-gray-700">
-            Page {currentPage} of {totalPages}
+            Page {page} of {totalPage}
           </span>
           <button
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page === totalPage}
             className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
           >
             Next

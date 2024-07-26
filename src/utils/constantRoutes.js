@@ -9,5 +9,7 @@ export const routerPath={
     adminUpdate:'/super-admin',
     adminDelete:'/super-admin',
 
-    productCreate:"/admin/product/create"
+    productCreate:"/admin/product/create",
+    productList:'/admin/product/all-products',
+
 }

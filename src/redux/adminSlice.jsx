@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../api'; // Adjust the path to your API setup
 import { adminListApi } from '../services/authService';
 import { getAuthHeader } from '../constant';
 

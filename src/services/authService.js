@@ -77,3 +77,18 @@ export const productCreateApi = async (payload, token) => {
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+
+export const productListApi = async ({ searchQuery = null, page, limit, token ,minPrice,maxPrice}) => {
+  try {
+    const url = `${routerPath.productList}?searchQuery=${searchQuery}&page=${page}&limit=${limit}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+    
+
+    const response = await api.post(url, {}, token);
+
+    return { data: response?.data, status: response?.status };
+  } catch (error) {
+    console.error('adminListApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
