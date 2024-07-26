@@ -28,12 +28,6 @@ export const productUpdateSchema = yup.object().shape({
   stock: yup.number().typeError('Stock must be a number').integer('Stock must be an integer').required('Stock is required'),
   images: yup.string().required('Images are required'),
   tags: yup.string().required('Tags are required'),
-  specifications: yup.array().of(
-    yup.object().shape({
-      name: yup.string().required('Specification name is required'),
-      details: yup.array().of(yup.string().required('Detail is required')).required('Details are required')
-    })
-  ).required('Specifications are required'),
   AvailableOffers: yup.string().required('Available Offers are required')
 });
 

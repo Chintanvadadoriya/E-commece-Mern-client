@@ -2,6 +2,8 @@ import api from '../api';
 
 import { loginPath, routerPath } from '../utils/constantRoutes';
 
+
+//auth manage
 export const loginApi = async (payload) => {
   try {
     const response = await api.post(loginPath.loginApi, payload);
@@ -16,6 +18,7 @@ export const loginApi = async (payload) => {
   }
 };
 
+// admin manage
 export const adminCreateApi = async (payload, token) => {
   try {
     const response = await api.post(routerPath.adminCreate, payload, token);
@@ -66,7 +69,7 @@ export const adminDeleteApi = async (payload,token) => {
 };
 
 
-
+// product manage api
 export const productCreateApi = async (payload, token) => {
   try {
     const response = await api.post(routerPath.productCreate, payload, token);
@@ -89,6 +92,32 @@ export const productListApi = async ({ searchQuery = null, page, limit, token ,m
     return { data: response?.data, status: response?.status };
   } catch (error) {
     console.error('adminListApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const getProdctDetailsById = async (id) => {
+  try {
+    const url = `${routerPath.productDetailsById}/${id}`;
+    
+    const response = await api.get(url);
+  
+    return {data:response?.data?.data};
+  } catch (error) {
+    console.error('adminUpdateApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+
+export const updateProductApi = async (payload,id,token) => {
+  try {
+    const url = `${routerPath.updatProductById}/${id}`;
+    
+    const response = await api.put(url,payload,token);
+    return {data:response?.data,status:response?.status};
+  } catch (error) {
+    console.error('adminUpdateApi 1612199', error)
     throw new Error(error?.response?.data?.msg);
   }
 };

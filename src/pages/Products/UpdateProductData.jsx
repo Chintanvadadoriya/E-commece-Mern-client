@@ -4,21 +4,26 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import CustomInput from '../../components/common/InputField';
 import { BackButton } from '../../utils/styleComponent';
-import { productUpdateSchema } from '../../utils/validators';
-import { productdata } from '../../utils/helpers';
-
+import {productUpdateSchema } from '../../utils/validators';
+import { getProdctDetailsById, updateProductApi } from '../../services/authService';
+import useToast from '../../hook/useToaster';
+import { getAuthHeader, wait } from '../../constant';
+import { useSelector } from 'react-redux';
+import { UserData } from '../../redux/authSlice';
+import { Loader } from 'rsuite';
 
 const isLargeScreen = window.innerWidth > 1024;
 
-const product = productdata;
 
 function UpdateProductData() {
   let { id } = useParams();
   const navigate = useNavigate();
-
+  const showToast = useToast();
+  const { token } = useSelector(UserData);
   const { control, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: yupResolver(productUpdateSchema),
   });
+  const [loading, setLoding] = useState(false)
 
   const [productData, setProductData] = useState({
     email: '',
@@ -35,51 +40,67 @@ function UpdateProductData() {
     AvailableOffers: [],
   });
 
-  useEffect(() => {
-    if (product) {
-      setProductData({
-        email: product.email,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        category: product.category,
-        subCategory: product.subCategory,
-        company: product.company,
-        stock: product.stock,
-        images: product.images,
-        tags: product.tags,
-        specifications: product.specifications,
-        AvailableOffers: product.AvailableOffers,
-      });
+  async function getProductDetailsById(id) {
+    try {
+      let { data } = await getProdctDetailsById(id)
+      if (data) {
+        setProductData({
+          email: data.email,
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          category: data.category,
+          subCategory: data.subCategory,
+          company: data.company,
+          stock: data.stock,
+          images: data.images.join(', '), // Convert array to string
+          tags: data.tags.join(', '), // Convert array to string
+          specifications: data.specifications, // Assuming this is an array of objects and should remain as such
+          AvailableOffers: data.AvailableOffers.join(', ') // Convert array to string
+        });
+      }
+      console.log("getProductDetailsById", data)
+
+    } catch (error) {
+      console.log("fetch error productdetaild by id", error)
     }
-  }, [product]);
+
+  }
+
+  useEffect(() => {
+    getProductDetailsById(id)
+  }, [id])
+
+
+
 
   useEffect(() => {
     reset(productData);
   }, [productData, reset]);
 
-  const handleSpecificationChange = (index, field, value) => {
-    const updatedSpecifications = [...productData.specifications];
+  const handleSpecificationChange = (index, field, valueOrDetailIndex, value) => {
+    setProductData(prevData => {
+      const updatedSpecs = [...prevData.specifications];
 
-    if (field === 'name') {
-      updatedSpecifications[index].name = value;
-    } else if (field === 'details') {
-      updatedSpecifications[index].details = value;
-    }
+      if (field === 'name') {
+        updatedSpecs[index] = { ...updatedSpecs[index], name: valueOrDetailIndex };
+      } else if (field === 'details') {
+        const updatedDetails = [...updatedSpecs[index].details];
+        updatedDetails[valueOrDetailIndex] = value;
+        updatedSpecs[index] = { ...updatedSpecs[index], details: updatedDetails };
+      }
 
-    setProductData({
-      ...productData,
-      specifications: updatedSpecifications,
+      return { ...prevData, specifications: updatedSpecs };
     });
   };
 
-  const handleAddSpecification = () => {
-    setProductData({
-      ...productData,
-      specifications: [
-        ...productData.specifications,
-        { name: '', details: [''] },
-      ],
+
+  const handleAddDetail = (index) => {
+    setProductData(prevData => {
+      const updatedSpecs = [...prevData.specifications];
+      const updatedDetails = [...updatedSpecs[index].details, ''];
+      updatedSpecs[index] = { ...updatedSpecs[index], details: updatedDetails };
+      return { ...prevData, specifications: updatedSpecs };
     });
   };
 
@@ -92,28 +113,32 @@ function UpdateProductData() {
     });
   };
 
-  const onSubmit = (data) => {
-    data.AvailableOffers = data.AvailableOffers.split(',');
-    console.log(data); // Replace with your form submission logic for updating the product
+  const onSubmit = async(updatedProductData) => {
+    setLoding(true)
+    updatedProductData.AvailableOffers = updatedProductData.AvailableOffers.split(',');
+    updatedProductData.images = updatedProductData.images.split(',');
+    updatedProductData.tags = updatedProductData.tags.split(',');
+    
+    try {
+      let { data, status } = await updateProductApi(updatedProductData,id,getAuthHeader(token))
+      if (status === 200) {
+          await wait(1)
+          showToast('success', `${data.msg}`);
+          setLoding(false)
+          backTo()
+      } else {
+          showToast('error updatedProductData 1612199', `${data}`);
+          setLoding(false)
+      }
+  } catch (error) {
+      showToast('error', `something went wrong!`);
+      console.log('error', error)
+      setLoding(false)
 
-    // Example of updating the product using fetch
-    fetch(`/api/products/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Product updated successfully:', data);
-        navigate(`/product/${id}`); // Navigate to the product detail page or another page
-      })
-      .catch((error) => {
-        console.error('Error updating product:', error);
-      });
-  };
+  }
 
+
+  }
   function backTo() {
     navigate('/products-list');
   }
@@ -266,7 +291,7 @@ function UpdateProductData() {
           )}
         />
 
-        <div>
+        {/* <div>
           {productData.specifications.map((spec, index) => (
             <div key={index} className="mt-3">
               <CustomInput
@@ -320,7 +345,47 @@ function UpdateProductData() {
           >
             Add Specification
           </button>
-        </div>
+        </div> */}
+
+        {productData?.specifications?.map((spec, index) => (
+          <div key={index} className="mt-3">
+            <CustomInput
+              id={`specification-name-${index}`}
+              name="name"
+              value={spec?.name}
+              onChange={(e) => handleSpecificationChange(index, 'name', e.target.value)}
+              label={`Specification ${index + 1} Name`}
+              error={errors?.specifications?.[index]?.name}
+            />
+            {spec?.details?.map((detail, detailIndex) => (
+              <CustomInput
+                key={detailIndex}
+                id={`specification-detail-${index}-${detailIndex}`}
+                name="detail"
+                value={detail}
+                onChange={(e) => handleSpecificationChange(index, 'details', detailIndex, e.target.value)}
+                label={`Detail ${detailIndex + 1}`}
+                error={errors?.specifications?.[index]?.details?.[detailIndex]}
+              />
+            ))}
+            <button
+              type="button"
+              onClick={() => handleAddDetail(index)}
+              className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md"
+            >
+              Add Detail
+            </button>
+            {index > 0 && (
+              <button
+                type="button"
+                onClick={() => handleRemoveSpecification(index)}
+                className="ml-2 mt-2 bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-md"
+              >
+                Remove Specification
+              </button>
+            )}
+          </div>
+        ))}
 
         <Controller
           name="AvailableOffers"
@@ -332,7 +397,7 @@ function UpdateProductData() {
               value={field.value}
               onChange={field.onChange}
               label="Available Offers"
-              error={errors.AvailableOffers}
+              error={errors?.AvailableOffers}
             />
           )}
         />
@@ -341,7 +406,8 @@ function UpdateProductData() {
           type="submit"
           className="h-11 w-full bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          Update Product
+         
+          {loading?<Loader content="Loading..." />:"Update Product"}
         </button>
       </form>
     </>

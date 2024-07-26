@@ -11,3 +11,6 @@ export const getAuthHeader = (token) => {
     };
   };
   
+export const wait=async(s)=>{
+  await new Promise(resolve => setTimeout(resolve, s*1000));
+}  

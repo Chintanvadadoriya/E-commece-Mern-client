@@ -35,8 +35,7 @@ const ProductTable = ({ isLargeScreen }) => {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    console.log('Search product', e.target.value)
-    setPage(1) // Reset to first page on new search
+    setPage(1)
   };
 
   const updateProduct = (id) => {
@@ -135,7 +134,7 @@ const ProductTable = ({ isLargeScreen }) => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex">
-                        <EditeProduct updateProduct={() => updateProduct(product.id)} id={product.id} />
+                        <EditeProduct updateProduct={() => updateProduct(product._id)} />
                         <Delete openModal={openModal} />
                       </div>
                     </td>

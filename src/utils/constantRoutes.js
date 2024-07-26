@@ -11,5 +11,7 @@ export const routerPath={
 
     productCreate:"/admin/product/create",
     productList:'/admin/product/all-products',
+    productDetailsById:'/product',
+    updatProductById:'/admin/product',
 
 }
