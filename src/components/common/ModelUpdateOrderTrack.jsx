@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Cancel, Update } from './Button';
 
-const options = ['ordered', 'pending', 'processing', 'shipped', 'delivered', 'canceled'];
+function Model({ isOpen, close, onUpdate, orderId, loading, Loader }) {
+    const [trackingStatus, setTrackingStatus] = useState('ordered');
 
-function Model({  isOpen, close }) {
     if (!isOpen) return null;
+
+    const handleUpdate = () => {
+        onUpdate({
+            id: orderId,
+            trackingStatus: trackingStatus
+        });
+    };
     return (
         <>
             {
@@ -12,9 +19,15 @@ function Model({  isOpen, close }) {
                     <div class="bg-white rounded-lg p-8 max-w-md w-full">
                         <h2 class="text-xl font-semibold mb-6 flex justify-center">Update Tracking Status</h2>
 
-                        <div class="mb-11">
-                            <label for="trackingStatus" class="block text-sm font-medium text-gray-700">Tracking Status</label>
-                            <select id="trackingStatus" name="trackingStatus" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <div className="mb-11">
+                            <label htmlFor="trackingStatus" className="block text-sm font-medium text-gray-700">Tracking Status</label>
+                            <select
+                                id="trackingStatus"
+                                name="trackingStatus"
+                                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                value={trackingStatus}
+                                onChange={(e) => setTrackingStatus(e.target.value)}
+                            >
                                 <option value="ordered">Ordered</option>
                                 <option value="pending">Pending</option>
                                 <option value="processing">Processing</option>
@@ -25,9 +38,9 @@ function Model({  isOpen, close }) {
                         </div>
 
                         <div class="flex justify-end">
-                          <Cancel close={close}/>
-                          <Update Update={"Update Track"}/>
-                            
+                            <Cancel close={close} />
+                            <Update onUpdate={handleUpdate} type="Update Order Track " loading={loading} Loader={Loader} />
+
                         </div>
                     </div>
                 </div>

@@ -60,21 +60,21 @@ const ProductTable = ({ isLargeScreen }) => {
     setPage(1); // Reset to first page on new limit
   };
   const handleDeleteProduct = async (id) => {
-       
+
     try {
-        let { data, status } = await deleteProductApi(id, getAuthHeader(token))
-        if (status === 200) {
-            showToast('success', `${data.msg}`);
-            dispatch(fetchProductData({ searchQuery: debouncedSearchQuery, page, limit, token, minPrice, maxPrice }))
-            closeModal()
-        } else {
-            showToast('error', `${data}`);
-        }
+      let { data, status } = await deleteProductApi(id, getAuthHeader(token))
+      if (status === 200) {
+        showToast('success', `${data.msg}`);
+        dispatch(fetchProductData({ searchQuery: debouncedSearchQuery, page, limit, token, minPrice, maxPrice }))
+        closeModal()
+      } else {
+        showToast('error', `${data}`);
+      }
     } catch (error) {
-        showToast('error', `something went wrong!`);
-        console.log('error', error)
+      showToast('error', `something went wrong!`);
+      console.log('error', error)
     }
-};
+  };
 
 
   return (
@@ -159,7 +159,7 @@ const ProductTable = ({ isLargeScreen }) => {
                     <td className="px-6 py-4">
                       <div className="flex">
                         <EditeProduct updateProduct={() => updateProduct(product._id)} />
-                        <Delete openModal={()=>openModal(product._id)} />
+                        <Delete openModal={() => openModal(product._id)} />
                       </div>
                     </td>
                   </tr>
@@ -189,7 +189,7 @@ const ProductTable = ({ isLargeScreen }) => {
           </button>
         </div>
       </div>
-      <DeleteModel type='productModel' isOpen={isModalOpen} close={closeModal} productId={productId} onUpdate={handleDeleteProduct}/>
+      <DeleteModel type='productModel' isOpen={isModalOpen} close={closeModal} productId={productId} onUpdate={handleDeleteProduct} />
     </>
   );
 };

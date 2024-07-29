@@ -67,7 +67,7 @@ const dispatch = useDispatch();
           <label className="block text-gray-700 text-lg mb-1">Email</label>
           <input
             type="email"
-            value="logisticworkit@gmail.com"
+            // value="logisticworkit@gmail.com"
             {...register('email')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />

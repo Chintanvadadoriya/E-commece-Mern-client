@@ -114,9 +114,9 @@ const SignupForm = () => {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-6 rounded-lg text-lg hover:bg-blue-700 transition duration-200"
         >
-          {loading?<Loader content="Loading..." />:'Create Admin'}
-         
-          
+          {loading ? <Loader content="Loading..." /> : 'Create Admin'}
+
+
         </button>
       </form>
       {/* <div className="text-center mt-4">

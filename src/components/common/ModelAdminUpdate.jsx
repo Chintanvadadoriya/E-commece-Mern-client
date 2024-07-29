@@ -22,7 +22,7 @@ const ModelAdminUpdate = ({ isOpen, close, adminId, onUpdate }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onUpdate({
-      id:adminId?._id,  
+      id: adminId?._id,
       name,
       email,
       isVerified,
@@ -31,7 +31,6 @@ const ModelAdminUpdate = ({ isOpen, close, adminId, onUpdate }) => {
     });
   };
 
-  console.log('isBlocktestModel', isBlock)
   if (!isOpen) return null;
 
   return (
@@ -88,13 +87,13 @@ const ModelAdminUpdate = ({ isOpen, close, adminId, onUpdate }) => {
             />
           </div>
           <div class="flex justify-end">
-          <Cancel close={close}/>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            Update
-          </button>
+            <Cancel close={close} />
+            <button
+              type="submit"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Update
+            </button>
 
           </div>
         </form>
