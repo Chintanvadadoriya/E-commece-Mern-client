@@ -16,7 +16,11 @@ export const routerPath = {
     deleteProductById: '/admin/product',
 
     OrderListOfAdmin: '/admin/order/all-admin-data',
-    OrderUpdatTracking: 'admin/order'
+    OrderUpdatTracking: 'admin/order',
+
+    couponList: '/admin/order/list-promotion-code',
+    couponDelet:'/admin/order/delete-promotion-code'
+
 
 
 

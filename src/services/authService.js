@@ -161,3 +161,30 @@ export const orderUpdatTrackStatusApi = async (id, payload, token) => {
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+
+export const couponListApi = async ({ page, limit,search, token }) => {
+  try {
+    const url = `${routerPath.couponList}?search=${search}&page=${page}&limit=${limit}`;
+
+
+    const response = await api.post(url, {}, token);
+
+    return { data: response?.data};
+  } catch (error) {
+    console.error('couponListApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const deleteCouponCodeApi = async (id, token) => {
+  try {
+    const url = `${routerPath.couponDelet}/${id?.id}`;
+
+    const response = await api.delete(url, token);
+    return { data: response?.data?.deleted, msg: response?.data?.msg };
+  } catch (error) {
+    console.error('deleteProductApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
