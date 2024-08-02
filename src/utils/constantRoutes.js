@@ -18,10 +18,8 @@ export const routerPath = {
     OrderListOfAdmin: '/admin/order/all-admin-data',
     OrderUpdatTracking: 'admin/order',
 
+    couponCreate: '/admin/order/create-promotion-code',
     couponList: '/admin/order/list-promotion-code',
     couponDelet:'/admin/order/delete-promotion-code'
-
-
-
 
 }

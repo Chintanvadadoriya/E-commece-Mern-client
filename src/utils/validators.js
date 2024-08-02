@@ -34,7 +34,8 @@ export const productUpdateSchema = yup.object().shape({
 export const couponCreateSchema = yup.object().shape({
   name: yup.string().required('Name is required'),
   discoutOff: yup.number().required('discoutOff is required'),
-  codeName: yup.string().required('codeName is required'),
+  codeName: yup.string().required('CodeName is required').nullable().notOneOf([null, ''], 'CodeName is required'),
+
 });
 
 export const changePasswordSchema = yup.object().shape({

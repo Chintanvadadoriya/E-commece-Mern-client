@@ -163,6 +163,19 @@ export const orderUpdatTrackStatusApi = async (id, payload, token) => {
 };
 
 
+export const couponCodeCreateApi = async (payload, token) => {
+  console.log('payload, token', payload, token)
+  try {
+    const response = await api.post(routerPath.couponCreate, payload, token);
+    console.log('response coupon code', response)
+    return { data: response?.status, msg: response?.data?.msg };
+  } catch (error) {
+    console.error('adminCreateApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+
 export const couponListApi = async ({ page, limit,search, token }) => {
   try {
     const url = `${routerPath.couponList}?search=${search}&page=${page}&limit=${limit}`;
