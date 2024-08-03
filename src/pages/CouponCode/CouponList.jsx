@@ -11,6 +11,7 @@ import Loader from '../../components/Loader';
 import useDebounce from '../../hook/useDebounce';
 import { Delete } from '../../components/common/Button';
 import DeleteModel from '../../components/common/DeleteModel';
+import { Loader as loadings } from 'rsuite';
 
 const CouponListTable = () => {
   const isLargeScreen = window.innerWidth > 1024;
@@ -25,6 +26,7 @@ const CouponListTable = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(false);
+  const [loadingDel, setLoadingDel] = useState(false);
   const [couponId, setCouponId] = useState();
 
   const handlePageChange = (newPage) => {
@@ -74,15 +76,19 @@ const CouponListTable = () => {
 
   const handleDeleteCoupon = async (id) => {
     try {
+      setLoadingDel(true);
       let { data, msg } = await deleteCouponCodeApi(id, getAuthHeader(token));
       if (data) {
         showToast('success', `${msg}`);
+        setLoadingDel(false);
         closeModal();
         showAllCouponList(page, limit, search);
       } else {
         showToast('error', `${msg}`);
+        setLoadingDel(false);
       }
     } catch (error) {
+      setLoadingDel(false);
       showToast('error', `something went wrong!`);
       console.log('error', error);
     }
@@ -218,6 +224,8 @@ const CouponListTable = () => {
         close={closeModal}
         couponId={couponId}
         onUpdate={handleDeleteCoupon}
+        Loader={loadings}
+        loading={loadingDel}
       />
     </>
   );
