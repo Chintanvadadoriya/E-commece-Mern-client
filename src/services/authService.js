@@ -201,3 +201,54 @@ export const deleteCouponCodeApi = async (id, token) => {
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+
+export const getAdminDeshboardOverViewApi = async (token) => {
+  try {
+    const url = `${routerPath.dashboard}`;
+
+    const response = await api.get(url,token);
+    return { data: response?.data};
+  } catch (error) {
+    console.error('getAdminDeshboardOverViewApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+
+export const getAdminDeshboardSaleApi = async (token) => {
+  try {
+    const url = `${routerPath.saleData}`;
+
+    const response = await api.get(url,token);
+    return { saleData: response?.data?.salesData};
+  } catch (error) {
+    console.error('getAdminDeshboardSaleApi 1612199', error)
+    throw new Error(error?.response?.data);
+  }
+};
+
+export const getAdminDeshboardOrderApi = async (token) => {
+  try {
+    const url = `${routerPath.orderData}`;
+
+    const response = await api.get(url,token);
+    return { orderData: response?.data?.ordersData};
+  } catch (error) {
+    console.error('getAdminDeshboardOrderApi 1612199', error)
+    throw new Error(error?.response?.data);
+  }
+};
+
+
+export const getAdminDeshboardUserActivityApi = async (token) => {
+  try {
+    const url = `${routerPath.userActivityData}`;
+
+    const response = await api.get(url,token);
+    return { userActivityData: response?.data?.userActivityData};
+  } catch (error) {
+    console.error('getAdminDeshboardUserActivityApi 1612199', error)
+    throw new Error(error?.response?.data);
+  }
+};

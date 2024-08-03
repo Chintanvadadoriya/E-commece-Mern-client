@@ -20,6 +20,14 @@ export const routerPath = {
 
     couponCreate: '/admin/order/create-promotion-code',
     couponList: '/admin/order/list-promotion-code',
-    couponDelet:'/admin/order/delete-promotion-code'
+    couponDelet:'/admin/order/delete-promotion-code',
+
+    dashboard:'/admin/deshboard',
+    saleData:'/admin/deshboard/sales-data',
+    orderData:'/admin/deshboard/orders-data',
+    userActivityData:'/admin/deshboard/user-activity-data'
+
+
+
 
 }
