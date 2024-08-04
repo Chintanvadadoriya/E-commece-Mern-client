@@ -1,6 +1,7 @@
 
 export const loginPath = {
-    loginApi: '/auth/login'
+    loginApi: '/auth/login',
+
 }
 
 export const routerPath = {
@@ -25,7 +26,11 @@ export const routerPath = {
     dashboard:'/admin/deshboard',
     saleData:'/admin/deshboard/sales-data',
     orderData:'/admin/deshboard/orders-data',
-    userActivityData:'/admin/deshboard/user-activity-data'
+    userActivityData:'/admin/deshboard/user-activity-data',
+
+    userProfileData:'/auth/user-profile-data'
+
+
 
 
 

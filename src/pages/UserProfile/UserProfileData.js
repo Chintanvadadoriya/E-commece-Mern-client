@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ModelUpdateProfile from '../../components/common/ModelUpdateProfile';
+import { useSelector } from 'react-redux';
+import { UserData } from '../../redux/authSlice';
+import { getUserProfileDataApi } from '../../services/authService';
+import { getAuthHeader } from '../../constant';
 
-const user={
-  profile:"https://img.freepik.com/photos-premium/homme-barbe-cercle-bleu-fond-blanc_1057389-84761.jpg",
-  name:"chintan Vadadoriya",
-  email:"chintan@gmail.com",
+const userDummy={
   address:"bapasitaram chaowk",
   Joined:"16/12/199",
   Phone:895657415,
@@ -13,10 +14,31 @@ const user={
 }
 
 function UserProfileData() {
-  const{profile,name,email,address,Joined,Phone,Membership}=user
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
+  const {token}=useSelector(UserData)
+  const{address,Joined,Phone,Membership}=userDummy
+  const [user,setUser]=useState()
+
+
+
+  async function getUserProfile(){
+    try{
+      let {data}=await getUserProfileDataApi(getAuthHeader(token))
+      console.log(data)
+      setUser(data)
+
+    }catch(err){
+      console.error("getuserProfe 1612199",err)
+    }
+  }
+
+
+  useEffect(()=>{
+   getUserProfile()
+  },[])
+
   return (
     <>
     <div className="min-h-screen bg-gray-100 p-4">
@@ -27,7 +49,7 @@ function UserProfileData() {
               <h1 className="text-2xl font-bold text-white">User Profile</h1>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">{name}</h1>
+              <h1 className="text-2xl font-bold text-white">{user?.name}</h1>
             </div>
           </div>
         </div>
@@ -35,12 +57,12 @@ function UserProfileData() {
         <div className="p-6 flex flex-col md:flex-row items-center md:items-start">
           <img
             className="w-32 h-32 rounded-full border-4 border-blue-600 mb-4 md:mb-0 md:mr-6"
-            src={profile}
+            src={user?.profilePicture}
             alt="User Profile"
           />
           <div className="flex-1">
-            <h2 className="text-xl font-bold mb-2">{name}</h2>
-            <p className="text-gray-600 mb-4">{email}</p>
+            <h2 className="text-xl font-bold mb-2">{user?.name}</h2>
+            <p className="text-gray-600 mb-4">{user?.email}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="text-gray-800 font-semibold">Address</h3>

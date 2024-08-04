@@ -252,3 +252,16 @@ export const getAdminDeshboardUserActivityApi = async (token) => {
     throw new Error(error?.response?.data);
   }
 };
+
+
+export const getUserProfileDataApi = async (token) => {
+  try {
+    const url = `${routerPath.userProfileData}`;
+
+    const response = await api.get(url,token);
+    return { data: response?.data?.user};
+  } catch (error) {
+    console.error('getUserProfileDataApi 1612199', error)
+    throw new Error(error?.response?.data);
+  }
+};
