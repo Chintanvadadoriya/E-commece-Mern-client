@@ -4,40 +4,79 @@ import CustomInput from './InputField';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { updateProfileSchema } from '../../utils/validators';
+import { getAuthHeader } from '../../constant';
+import { updateUserProfileDataApi } from '../../services/authService';
+import { useSelector } from 'react-redux';
+import { UserData } from '../../redux/authSlice';
+import useToast from '../../hook/useToaster';
+import { Loader } from 'rsuite';
 
-function ModelUpdateProfile({ isOpen, close }) {
-  const { control, handleSubmit, formState: { errors }, reset } = useForm({
+function ModelUpdateProfile({ isOpen, close, user, getUserProfile }) {
+  const { token } = useSelector(UserData);
+  const showToast = useToast();
+  const [loader, setLoader] = useState(false);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
     resolver: yupResolver(updateProfileSchema),
+    defaultValues: {
+      image: user?.profilePicture || '',
+      name: user?.name || '',
+    },
   });
-
-  const [userUpdate, setUserUpdate] = useState({
-    image: '',
-    name: '',
-  });
-
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
       reset({
-        image: '',
-        name: '',
+        image: user?.profilePicture || '',
+        name: user?.name || '',
       });
     }
-  }, [isOpen, reset]);
+  }, [isOpen, reset, user]);
 
   if (!isOpen) return null;
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    setLoader(true);
     console.log('userUpdate', data);
-    // Handle profile update logic here
-    close();
+    let payload = {
+      name: data?.name,
+      profilePicture: data?.image,
+    };
+    try {
+      const { data, msg } = await updateUserProfileDataApi(
+        payload,
+        getAuthHeader(token)
+      );
+      if (data === 200) {
+        showToast('success', `${msg}`);
+        getUserProfile();
+        close();
+        setLoader(false);
+      } else {
+        showToast('error', `${msg}`);
+        setLoader(false);
+      }
+    } catch (error) {
+      showToast('error', `${error.message}`);
+      console.log('userUpdate error 1612199', error);
+      setLoader(false);
+    }
   };
-
+  console.log('user chintan', user);
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-70 z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full">
-        <h2 className="text-black font-semibold mb-6 flex justify-center">Update Profile</h2>
+        <h2 className="text-black font-semibold mb-6 flex justify-center">
+          Update Profile
+        </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto mt-6 text-black">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="max-w-xl mx-auto mt-6 text-black"
+        >
           <Controller
             name="image"
             control={control}
@@ -70,7 +109,7 @@ function ModelUpdateProfile({ isOpen, close }) {
             type="submit"
             className="h-11 w-full bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Update Profile
+            {loader ? <Loader content="profile Update..." /> : 'Update Profile'}
           </button>
         </form>
 

@@ -26,7 +26,6 @@ function UserProfileData() {
   async function getUserProfile(){
     try{
       let {data}=await getUserProfileDataApi(getAuthHeader(token))
-      console.log(data)
       setUser(data)
 
     }catch(err){
@@ -88,7 +87,7 @@ function UserProfileData() {
         </div>
       </div>
     </div>
-    <ModelUpdateProfile  isOpen={isModalOpen} close={closeModal} />
+    <ModelUpdateProfile  isOpen={isModalOpen} close={closeModal} user={user} getUserProfile={getUserProfile}/>
     </>
   );
 }

@@ -265,3 +265,17 @@ export const getUserProfileDataApi = async (token) => {
     throw new Error(error?.response?.data);
   }
 };
+
+
+export const updateUserProfileDataApi = async (payload,token) => {
+  try {
+    const url = `${routerPath.updataUserProfileData}`;
+
+    const response = await api.put(url,payload,token);
+    console.log('response', response)
+    return {data:response?.status, msg: response?.data?.msg};
+  } catch (error) {
+    console.error('updateUserProfileDataApi 1612199', error)
+    throw new Error(error?.response?.data);
+  }
+};
