@@ -284,7 +284,6 @@ export const passwordChangeUserApi = async (payload,token) => {
     const url = `${routerPath.passwordChange}`;
 
     const response = await api.post(url,payload,token);
-    console.log('response passwordChangeUserApi', response)
     return {data:response?.status, msg: response?.data?.msg};
   } catch (error) {
     console.error('passwordChangeUserApi 1612199', error)

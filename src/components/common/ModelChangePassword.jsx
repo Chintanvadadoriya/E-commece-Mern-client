@@ -43,7 +43,6 @@ function ModelChangePassword({ isOpen, close }) {
         payload,
         getAuthHeader(token)
       );
-      console.log('Password changed successfully', data, msg);
 
       if (data === 200) {
         showToast('success', `${msg}`);
@@ -56,8 +55,6 @@ function ModelChangePassword({ isOpen, close }) {
     } catch (error) {
       console.error('Failed to change password', error);
       showToast('error', `${error.message}`);
-
-      // You can show an error message here if needed
     } finally {
       setLoading(false);
     }
