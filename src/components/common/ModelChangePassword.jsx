@@ -4,16 +4,25 @@ import CustomInput from './InputField';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { changePasswordSchema } from '../../utils/validators';
+import { useSelector } from 'react-redux';
+import { UserData } from '../../redux/authSlice';
+import { getAuthHeader } from '../../constant';
+import { passwordChangeUserApi } from '../../services/authService';
+import useToast from '../../hook/useToaster';
 
 function ModelChangePassword({ isOpen, close }) {
-  const { control, handleSubmit, formState: { errors }, reset } = useForm({
+  const { token } = useSelector(UserData);
+  const showToast = useToast();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
     resolver: yupResolver(changePasswordSchema),
   });
 
-  const [passwordManage, setPasswordManage] = useState({
-    currentPassword: '',
-    newPassword: '',
-  });
+  const [loading, setLoading] = useState(false); // Add loading state
 
   useEffect(() => {
     if (!isOpen) {
@@ -26,18 +35,44 @@ function ModelChangePassword({ isOpen, close }) {
 
   if (!isOpen) return null;
 
-  const onSubmit = (data) => {
-    console.log('passwordManage', data);
-    // Handle password change logic here
-    close();
+  const onSubmit = async (payload) => {
+    setLoading(true);
+    try {
+      let { data, msg } = await passwordChangeUserApi(
+        payload,
+        getAuthHeader(token)
+      );
+      console.log('Password changed successfully', data, msg);
+
+      if (data === 200) {
+        showToast('success', `${msg}`);
+        close();
+        setLoading(false);
+      } else {
+        showToast('error', `${msg}`);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Failed to change password', error);
+      showToast('error', `${error.message}`);
+
+      // You can show an error message here if needed
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-70 z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full">
-        <h2 className="text-black font-semibold mb-6 flex justify-center">Change Password</h2>
+        <h2 className="text-black font-semibold mb-6 flex justify-center">
+          Change Password
+        </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto mt-6 text-black">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="max-w-xl mx-auto mt-6 text-black"
+        >
           <Controller
             name="currentPassword"
             control={control}
@@ -69,8 +104,9 @@ function ModelChangePassword({ isOpen, close }) {
           <button
             type="submit"
             className="h-11 w-full bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={loading} // Disable button while loading
           >
-            Update password
+            {loading ? 'Updating...' : 'Update password'}
           </button>
         </form>
 

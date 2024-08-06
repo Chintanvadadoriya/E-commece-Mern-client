@@ -40,7 +40,6 @@ function ModelUpdateProfile({ isOpen, close, user, getUserProfile }) {
 
   const onSubmit = async (data) => {
     setLoader(true);
-    console.log('userUpdate', data);
     let payload = {
       name: data?.name,
       profilePicture: data?.image,

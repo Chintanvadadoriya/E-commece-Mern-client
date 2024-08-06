@@ -29,7 +29,9 @@ export const routerPath = {
     userActivityData:'/admin/deshboard/user-activity-data',
 
     userProfileData:'/auth/user-profile-data',
-    updataUserProfileData:'/auth/profile-update'
+    updataUserProfileData:'/auth/profile-update',
+    passwordChange:'/auth/change-password',
+
 
 
 
