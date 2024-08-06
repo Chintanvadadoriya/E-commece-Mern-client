@@ -20,6 +20,7 @@ import 'rsuite/dist/rsuite.min.css';
 import AdminListTable from './pages/super-admin/AdminList';
 import { PublicRoute ,ProtectedRoute} from './pages/auth/ProtectedRoutes';
 import NotFound from './components/NotFound';
+import ForgotPassword from './pages/auth/ForgotPassword';
 
 const AppRoutes = () => {
   return (
@@ -30,6 +31,8 @@ const AppRoutes = () => {
             {/* Public Routes */}
             {/* <Route path="/admin-create" element={<PublicRoute><PublicLayout><SignupForm /></PublicLayout></PublicRoute>} /> */}
             <Route path="/" element={<PublicRoute><PublicLayout><LoginForm /></PublicLayout></PublicRoute>} />
+            <Route path="/forgot-password" element={<PublicRoute><PublicLayout><ForgotPassword /></PublicLayout></PublicRoute>} />
+
 
             {/* Private Routes */}
             <Route path="/admin-create" element={<ProtectedRoute allowedRoles={['superAdmin']}><SignupForm /></ProtectedRoute>} />

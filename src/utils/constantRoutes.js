@@ -31,6 +31,8 @@ export const routerPath = {
     userProfileData:'/auth/user-profile-data',
     updataUserProfileData:'/auth/profile-update',
     passwordChange:'/auth/change-password',
+    forgotPassword:'/auth/request-password-reset',
+
 
 
 

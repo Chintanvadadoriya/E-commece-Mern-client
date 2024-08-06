@@ -290,3 +290,16 @@ export const passwordChangeUserApi = async (payload,token) => {
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+export const forgotPasswordApi = async (payload) => {
+  try {
+    const url = `${routerPath.forgotPassword}`;
+
+    const response = await api.post(url,payload);
+    console.log('response', response)
+    return {data:response?.status, msg: response?.data?.msg};
+  } catch (error) {
+    console.error('forgotPasswordApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
