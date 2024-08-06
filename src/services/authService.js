@@ -288,6 +288,6 @@ export const passwordChangeUserApi = async (payload,token) => {
     return {data:response?.status, msg: response?.data?.msg};
   } catch (error) {
     console.error('passwordChangeUserApi 1612199', error)
-    throw new Error(error?.response?.data);
+    throw new Error(error?.response?.data?.msg);
   }
 };

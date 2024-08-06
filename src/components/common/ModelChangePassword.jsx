@@ -9,6 +9,7 @@ import { UserData } from '../../redux/authSlice';
 import { getAuthHeader } from '../../constant';
 import { passwordChangeUserApi } from '../../services/authService';
 import useToast from '../../hook/useToaster';
+import { Loader } from 'rsuite';
 
 function ModelChangePassword({ isOpen, close }) {
   const { token } = useSelector(UserData);
@@ -106,7 +107,11 @@ function ModelChangePassword({ isOpen, close }) {
             className="h-11 w-full bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             disabled={loading} // Disable button while loading
           >
-            {loading ? 'Updating...' : 'Update password'}
+            {loading ? (
+              <Loader content="password update..." />
+            ) : (
+              'Update password'
+            )}
           </button>
         </form>
 
