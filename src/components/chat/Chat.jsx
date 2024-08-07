@@ -77,7 +77,7 @@ function Chat({ isLargeScreen }) {
 
   return (
     <div
-      className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6 h-20`}
+      className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6 h-20 w-full`}
     >
       <h1 className="text-2xl font-semibold mb-6 flex justify-center mb-10">
         Chat with Admin
