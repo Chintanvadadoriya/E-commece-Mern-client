@@ -21,6 +21,8 @@ import AdminListTable from './pages/super-admin/AdminList';
 import { PublicRoute ,ProtectedRoute} from './pages/auth/ProtectedRoutes';
 import NotFound from './components/NotFound';
 import ForgotPassword from './pages/auth/ForgotPassword';
+import ChatPage from './pages/Chat/Chat';
+
 
 const AppRoutes = () => {
   return (
@@ -45,6 +47,8 @@ const AppRoutes = () => {
             <Route path="/coupon-list" element={<ProtectedRoute allowedRoles={['admin']}><CouponListTable /></ProtectedRoute>} />
             <Route path="/user-profile" element={<ProtectedRoute allowedRoles={['admin']}><UserProfileData /></ProtectedRoute>} />
             <Route path="/update-product/:id" element={<ProtectedRoute allowedRoles={['admin']}><UpdateProductData /></ProtectedRoute>} />
+            <Route path="/chat" element={<ProtectedRoute allowedRoles={['admin','superAdmin']}><ChatPage /></ProtectedRoute>} />
+
 
              {/* Catch-All Route for 404 */}
              <Route path="*" element={<NotFound />} />
