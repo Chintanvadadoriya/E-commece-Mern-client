@@ -128,13 +128,14 @@ function Chat({ isLargeScreen }) {
     <div
       className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6 h-full w-full`}
     >
-      <h1 className="text-2xl font-semibold mb-6 flex justify-center mb-10">
-        Chat with Admin
-      </h1>
-      <h1 className="flex justify-center">
-        <strong>{selectedUser?.name}</strong>
-      </h1>
-      <hr className="mb-2" />
+      <div className="text-2xl font-semibold mb-6 flex justify-center mb-10">
+        {/* Chat with {selectedUser?.name} */}
+        <span>
+          {`Chat with `}
+          {selectedUser?.name || `Admin`}
+        </span>
+      </div>
+
       <div className="flex">
         <div
           className="w-1/4 bg-gray-200 p-4 rounded-lg  overflow-hidden"
