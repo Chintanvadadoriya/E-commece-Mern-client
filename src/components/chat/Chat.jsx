@@ -9,12 +9,12 @@ const adminPhoto =
   'https://media.licdn.com/dms/image/D4D03AQHZCnU83ynsiw/profile-displayphoto-shrink_200_200/0/1720078846351?e=2147483647&v=beta&t=GwF8savK5o5cHJ-lmtU4bqW30mc7Fbrj01HVslmv2VA'; // Replace with the actual path to the admin's profile photo
 
 const initialUsers = [
-  { id: 1, name: 'User 1', photo: userPhoto, pendingMessages: 0 },
-  { id: 2, name: 'User 2', photo: userPhoto, pendingMessages: 0 },
-  { id: 3, name: 'User 3', photo: userPhoto, pendingMessages: 0 },
-  { id: 4, name: 'User 4', photo: userPhoto, pendingMessages: 0 },
-  { id: 5, name: 'User 5', photo: userPhoto, pendingMessages: 0 },
-  { id: 6, name: 'User 6', photo: userPhoto, pendingMessages: 0 },
+  { id: 1, name: 'Simon', photo: userPhoto, pendingMessages: 0 },
+  { id: 2, name: 'Patric', photo: userPhoto, pendingMessages: 0 },
+  { id: 3, name: 'Jonas', photo: userPhoto, pendingMessages: 0 },
+  { id: 4, name: 'Bob', photo: userPhoto, pendingMessages: 0 },
+  { id: 5, name: 'Lerix', photo: userPhoto, pendingMessages: 0 },
+  { id: 6, name: 'Brutionn', photo: userPhoto, pendingMessages: 0 },
   { id: 7, name: 'User 7', photo: userPhoto, pendingMessages: 0 },
   { id: 8, name: 'User 8', photo: userPhoto, pendingMessages: 0 },
   { id: 9, name: 'User 9', photo: userPhoto, pendingMessages: 0 },
@@ -131,9 +131,15 @@ function Chat({ isLargeScreen }) {
       <h1 className="text-2xl font-semibold mb-6 flex justify-center mb-10">
         Chat with Admin
       </h1>
-
+      <h1 className="flex justify-center">
+        <strong>{selectedUser?.name}</strong>
+      </h1>
+      <hr className="mb-2" />
       <div className="flex">
-        <div className="w-1/4 bg-gray-200 p-4 rounded-lg h-full overflow-hidden">
+        <div
+          className="w-1/4 bg-gray-200 p-4 rounded-lg  overflow-hidden"
+          style={{ height: '600px' }}
+        >
           <h2 className="text-xl font-medium mb-4 flex justify-between items-center">
             Users {initialUsers?.length}
             {users.length > 7 && (
@@ -147,7 +153,7 @@ function Chat({ isLargeScreen }) {
           </h2>
           <ul
             className={`transition-all duration-300 ease-in-out overflow-y-auto ${
-              isUserListExpanded ? 'h-96' : 'h-100'
+              isUserListExpanded ? '[height:500px]' : 'h-100'
             }`}
           >
             {(isUserListExpanded ? users : users.slice(0, 7)).map((user) => (

@@ -19,7 +19,7 @@ const NotificationDropdown = () => {
     <div className="relative">
 
       { (
-        <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+        <div className=" z-10 absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
           <div className="p-4 max-h-96 overflow-y-auto">
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
               Notifications
