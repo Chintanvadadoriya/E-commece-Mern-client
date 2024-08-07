@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../../redux/authSlice';
 import { useDispatch } from 'react-redux';
 import useToast from '../../hook/useToaster';
+import NotificationDropdown from '../NotificationDropdown';
 
 const Header = ({ toggleSidebar, isOpen }) => {
   const dispatch = useDispatch();
@@ -131,25 +132,7 @@ const Header = ({ toggleSidebar, isOpen }) => {
                 50
               </div>
             </button>
-            {isDropdownOpenNotification && (
-              <div className="absolute right-0 mt-2 w-60 bg-white rounded-md shadow-lg py-2 z-20 transition duration-200 ease-in-out transform opacity-100 scale-100">
-                <span className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer">
-                  Notification 1
-                </span>
-                <span className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer">
-                  Notification 2
-                </span>
-                <span className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer">
-                  Notification 3
-                </span>
-                <span className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer">
-                  Notification 4
-                </span>
-                <span className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer">
-                  Notification 5
-                </span>
-              </div>
-            )}
+            {isDropdownOpenNotification && <NotificationDropdown />}
           </span>
           <span ref={dropdownRef}>
             <img
