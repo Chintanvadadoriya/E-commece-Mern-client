@@ -12,17 +12,9 @@ import {
   getAdminDeshboardUserActivityApi,
 } from '../../services/authService';
 import { getAuthHeader } from '../../constant';
+import { useSocket } from '../../Context/SocketContext';
 const isLargeScreen = window.innerWidth > 1024;
 
-const ordersData = {
-  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-  values: [50, 40, 60, 55, 70, 65],
-};
-
-const userActivityData = {
-  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-  values: [100, 200, 150, 300, 250, 400],
-};
 const Dashboard = () => {
   const { token } = useSelector(UserData);
   const [adminSummery, setAdminSummery] = useState();

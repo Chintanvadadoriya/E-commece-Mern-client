@@ -296,8 +296,20 @@ export const forgotPasswordApi = async (payload) => {
     const url = `${routerPath.forgotPassword}`;
 
     const response = await api.post(url,payload);
-    console.log('response', response)
     return {data:response?.status, msg: response?.data?.msg};
+  } catch (error) {
+    console.error('forgotPasswordApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const allAdminListApi = async () => {
+  try {
+    const url = `${routerPath.allAdminList}`;
+
+    const response = await api.get(url);
+    console.log('response allAdminList', response)
+    return {data:response?.data?.data, status: response?.status};
   } catch (error) {
     console.error('forgotPasswordApi 1612199', error)
     throw new Error(error?.response?.data?.msg);

@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ChatMessage from './ChatMessage';
 import Picker from 'emoji-picker-react';
-import moment from 'moment';
+import { useSocket } from '../../Context/SocketContext';
+import { allAdminListApi } from '../../services/authService';
 
 const userPhoto =
   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8Ft3wkMzh_PFVQMh_W8MbSbd-ZGrBX833wVolP6kZ-kWXIL7fmQWsiU7duTvxxRyKEY8TrdjiV9-vUyqVXNH6OMQc1bX18QFP94tDlw'; // Replace with the actual path to the user's profile photo
@@ -24,13 +25,29 @@ const initialUsers = [
 ];
 
 function Chat({ isLargeScreen }) {
+  const [adminData, setAdminData] = useState([]);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(initialUsers[0]);
-  const [users, setUsers] = useState(initialUsers);
+  const [selectedUser, setSelectedUser] = useState();
   const [isUserListExpanded, setIsUserListExpanded] = useState(false);
   const messagesEndRef = useRef(null);
+  const { socket, connected } = useSocket();
+
+  async function showAllAdminList() {
+    console.log('Chatpage userIsConnected!', connected);
+    try {
+      let { data } = await allAdminListApi();
+      setAdminData(data);
+      setSelectedUser(data[0]);
+    } catch (err) {
+      console.log('err showAll admin 1612199', err);
+    }
+  }
+
+  useEffect(() => {
+    showAllAdminList();
+  }, []);
 
   const handleSend = () => {
     if (input.trim()) {
@@ -44,19 +61,6 @@ function Chat({ isLargeScreen }) {
       };
       setMessages([...messages, newMessage]);
       setInput('');
-      // Simulate a received message
-      setTimeout(() => {
-        const receivedMessage = {
-          text: 'Received message',
-          isSent: false,
-          profilePhoto: adminPhoto,
-          time: new Date(),
-          name: 'Admin', // Admin's name
-          userId: selectedUser.id,
-        };
-        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-        incrementPendingMessages(selectedUser.id);
-      }, 1000);
     }
   };
 
@@ -99,31 +103,14 @@ function Chat({ isLargeScreen }) {
 
   const handleUserClick = (user) => {
     setSelectedUser(user);
-    resetPendingMessages(user.id);
+    // resetPendingMessages(user.id);
   };
 
   const filteredMessages = messages.filter(
     (message) => message.userId === selectedUser.id
   );
 
-  const incrementPendingMessages = (userId) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userId
-          ? { ...user, pendingMessages: user.pendingMessages + 1 }
-          : user
-      )
-    );
-  };
-
-  const resetPendingMessages = (userId) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userId ? { ...user, pendingMessages: 0 } : user
-      )
-    );
-  };
-
+  console.log('adminData', adminData);
   return (
     <div
       className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6 h-full w-full`}
@@ -142,8 +129,8 @@ function Chat({ isLargeScreen }) {
           style={{ height: '600px' }}
         >
           <h2 className="text-xl font-medium mb-4 flex justify-between items-center">
-            Users {initialUsers?.length}
-            {users.length > 7 && (
+            Users {adminData?.length}
+            {adminData.length > 7 && (
               <button
                 onClick={() => setIsUserListExpanded(!isUserListExpanded)}
                 className="text-sm text-blue-500"
@@ -157,34 +144,38 @@ function Chat({ isLargeScreen }) {
               isUserListExpanded ? '[height:500px]' : 'h-100'
             }`}
           >
-            {(isUserListExpanded ? users : users.slice(0, 7)).map((user) => (
-              <li
-                key={user.id}
-                className={`relative p-4 mb-3 cursor-pointer rounded-lg flex items-center ${
-                  user.id === selectedUser.id
-                    ? 'bg-gray-600 text-white'
-                    : 'bg-white text-gray-700'
-                }`}
-                onClick={() => handleUserClick(user)}
-              >
-                <img
-                  src={user.photo}
-                  alt={user.name}
-                  className="inline-block w-8 h-8 rounded-full mr-2"
-                />
-                <div>
-                  {user.name}
-                  {user.pendingMessages > 0 && (
-                    <span className="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                      {user.pendingMessages}
-                    </span>
-                  )}
-                </div>
-                {user.id === selectedUser.id && (
-                  <span className="absolute top-1 left-1 bg-green-500 w-3 h-3 rounded-full"></span>
-                )}
-              </li>
-            ))}
+            {(isUserListExpanded ? adminData : adminData.slice(0, 7)).map(
+              (user) => {
+                return (
+                  <li
+                    key={user.email}
+                    className={`relative p-4 mb-3 cursor-pointer rounded-lg flex items-center ${
+                      user.email === selectedUser.email
+                        ? 'bg-gray-600 text-white'
+                        : 'bg-white text-gray-700'
+                    }`}
+                    onClick={() => handleUserClick(user)}
+                  >
+                    <img
+                      src={user.profilePicture}
+                      alt={user.name}
+                      className="inline-block w-8 h-8 rounded-full mr-2"
+                    />
+                    <div>
+                      {user.name}
+                      {user.pendingMessages > 0 && (
+                        <span className="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                          {user.pendingMessages}
+                        </span>
+                      )}
+                    </div>
+                    {user.email === selectedUser.email && (
+                      <span className="absolute top-1 left-1 bg-green-500 w-3 h-3 rounded-full"></span>
+                    )}
+                  </li>
+                );
+              }
+            )}
           </ul>
         </div>
 

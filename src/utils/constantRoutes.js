@@ -33,6 +33,9 @@ export const routerPath = {
     passwordChange:'/auth/change-password',
     forgotPassword:'/auth/request-password-reset',
 
+    allAdminList:'/auth/all-admin',
+
+
 
 
 

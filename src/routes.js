@@ -22,11 +22,13 @@ import { PublicRoute ,ProtectedRoute} from './pages/auth/ProtectedRoutes';
 import NotFound from './components/NotFound';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ChatPage from './pages/Chat/Chat';
+import { SocketProvider } from './Context/SocketContext';
 
 
 const AppRoutes = () => {
   return (
     <Provider store={store}>
+    <SocketProvider>
       <AuthProvider>
         <Router>
           <Routes>
@@ -55,6 +57,7 @@ const AppRoutes = () => {
           </Routes>
         </Router>
       </AuthProvider>
+    </SocketProvider>
     </Provider>
   );
 };
