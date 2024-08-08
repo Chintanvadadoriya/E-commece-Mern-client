@@ -3,26 +3,11 @@ import ChatMessage from './ChatMessage';
 import Picker from 'emoji-picker-react';
 import { useSocket } from '../../Context/SocketContext';
 import { allAdminListApi } from '../../services/authService';
+import { UserData } from '../../redux/authSlice';
+import { useSelector } from 'react-redux';
 
 const userPhoto =
   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8Ft3wkMzh_PFVQMh_W8MbSbd-ZGrBX833wVolP6kZ-kWXIL7fmQWsiU7duTvxxRyKEY8TrdjiV9-vUyqVXNH6OMQc1bX18QFP94tDlw'; // Replace with the actual path to the user's profile photo
-const adminPhoto =
-  'https://media.licdn.com/dms/image/D4D03AQHZCnU83ynsiw/profile-displayphoto-shrink_200_200/0/1720078846351?e=2147483647&v=beta&t=GwF8savK5o5cHJ-lmtU4bqW30mc7Fbrj01HVslmv2VA'; // Replace with the actual path to the admin's profile photo
-
-const initialUsers = [
-  { id: 1, name: 'Simon', photo: userPhoto, pendingMessages: 0 },
-  { id: 2, name: 'Patric', photo: userPhoto, pendingMessages: 0 },
-  { id: 3, name: 'Jonas', photo: userPhoto, pendingMessages: 0 },
-  { id: 4, name: 'Bob', photo: userPhoto, pendingMessages: 0 },
-  { id: 5, name: 'Lerix', photo: userPhoto, pendingMessages: 0 },
-  { id: 6, name: 'Brutionn', photo: userPhoto, pendingMessages: 0 },
-  { id: 7, name: 'User 7', photo: userPhoto, pendingMessages: 0 },
-  { id: 8, name: 'User 8', photo: userPhoto, pendingMessages: 0 },
-  { id: 9, name: 'User 9', photo: userPhoto, pendingMessages: 0 },
-  { id: 10, name: 'User 10', photo: userPhoto, pendingMessages: 0 },
-  { id: 11, name: 'User 11', photo: userPhoto, pendingMessages: 0 },
-  { id: 12, name: 'User 12', photo: userPhoto, pendingMessages: 0 },
-];
 
 function Chat({ isLargeScreen }) {
   const [adminData, setAdminData] = useState([]);
@@ -33,6 +18,7 @@ function Chat({ isLargeScreen }) {
   const [isUserListExpanded, setIsUserListExpanded] = useState(false);
   const messagesEndRef = useRef(null);
   const { socket, connected } = useSocket();
+  const { user } = useSelector(UserData);
 
   async function showAllAdminList() {
     console.log('Chatpage userIsConnected!', connected);
@@ -145,31 +131,31 @@ function Chat({ isLargeScreen }) {
             }`}
           >
             {(isUserListExpanded ? adminData : adminData.slice(0, 7)).map(
-              (user) => {
+              (adminUser) => {
                 return (
                   <li
-                    key={user.email}
+                    key={adminUser.email}
                     className={`relative p-4 mb-3 cursor-pointer rounded-lg flex items-center ${
-                      user.email === selectedUser.email
+                      adminUser.email === selectedUser.email
                         ? 'bg-gray-600 text-white'
                         : 'bg-white text-gray-700'
                     }`}
-                    onClick={() => handleUserClick(user)}
+                    onClick={() => handleUserClick(adminUser)}
                   >
                     <img
-                      src={user.profilePicture}
-                      alt={user.name}
+                      src={adminUser.profilePicture}
+                      alt={adminUser.name}
                       className="inline-block w-8 h-8 rounded-full mr-2"
                     />
                     <div>
-                      {user.name}
-                      {user.pendingMessages > 0 && (
+                      {adminUser.name === user.name ? 'You' : adminUser.name}
+                      {/* {5 > 0 && (
                         <span className="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                          {user.pendingMessages}
+                          5
                         </span>
-                      )}
+                      )} */}
                     </div>
-                    {user.email === selectedUser.email && (
+                    {adminUser.email === selectedUser.email && (
                       <span className="absolute top-1 left-1 bg-green-500 w-3 h-3 rounded-full"></span>
                     )}
                   </li>
