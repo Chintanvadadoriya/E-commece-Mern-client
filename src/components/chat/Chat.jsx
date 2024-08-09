@@ -26,7 +26,6 @@ function Chat({ isLargeScreen }) {
   const [userChat, setUserChat] = useState([]);
 
   async function showAllAdminList() {
-    console.log('Chatpage userIsConnected!', connected);
     try {
       let { data } = await allAdminListApi();
       setAdminData(data);
@@ -37,7 +36,6 @@ function Chat({ isLargeScreen }) {
   }
 
   async function showAllPrivateMsg(payload) {
-    console.log('Chatpage userIsConnected!', connected);
     try {
       let { data } = await viewAllPrivateChat(payload, getAuthHeader(token));
       setUserChat(data);
@@ -52,8 +50,10 @@ function Chat({ isLargeScreen }) {
 
   useEffect(() => {
     socket?.on('private message', (data) => {
-      console.log('data incoming message', data);
-      setMessages((prevMessages) => [...prevMessages, data]);
+      console.log('data recive message', data, user.email !== data.from);
+      if (user.email !== data.from) {
+        setUserChat((prevMessages) => [...prevMessages, data]);
+      }
     });
 
     return () => {
@@ -77,8 +77,11 @@ function Chat({ isLargeScreen }) {
         time: new Date(),
         name: 'You', // User's name
         userId: selectedUser.id,
+        senderEmail: user.email, // Ensure senderEmail is correctly set
+        recipientEmail: selectedUser.email,
       };
-      setMessages([...messages, newMessage]);
+      // setUserChat([...userChat, newMessage]);
+      setUserChat((prevMessages) => [...prevMessages, newMessage]);
       // Emit private message event to the server
       if (socket) {
         socket.emit('private message', {
@@ -94,7 +97,6 @@ function Chat({ isLargeScreen }) {
     setInput((prevInput) => prevInput + emoji.emoji);
   };
 
-  console.log('selectedUser', selectedUser);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -107,7 +109,7 @@ function Chat({ isLargeScreen }) {
         file,
         userId: selectedUser.id,
       };
-      setMessages([...messages, newMessage]);
+      setUserChat([...userChat, newMessage]);
       e.target.value = null; // Clear the file input
     }
   };
@@ -126,19 +128,12 @@ function Chat({ isLargeScreen }) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [userChat]);
 
   const handleUserClick = (user) => {
     setSelectedUser(user);
-    // resetPendingMessages(user.id);
   };
 
-  const filteredMessages = messages.filter(
-    (message) => message.userId === selectedUser.id
-  );
-
-  console.log('adminData', adminData);
-  console.log('filteredMessages', filteredMessages);
   return (
     <div
       className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6 h-full w-full`}
