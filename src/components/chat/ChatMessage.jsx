@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 
 function ChatMessage({ message, isSent, profilePhoto, time, name, file }) {
+  console.log('ChatMessage', message, isSent, profilePhoto, time, name, file);
   return (
     <div className={`flex ${isSent ? 'justify-end' : 'justify-start'} mb-2`}>
       {!isSent && (

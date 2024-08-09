@@ -308,10 +308,22 @@ export const allAdminListApi = async () => {
     const url = `${routerPath.allAdminList}`;
 
     const response = await api.get(url);
-    console.log('response allAdminList', response)
     return {data:response?.data?.data, status: response?.status};
   } catch (error) {
-    console.error('forgotPasswordApi 1612199', error)
+    console.error('allAdminListApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const viewAllPrivateChat = async (payload,token) => {
+  try {
+    const url = `${routerPath.viewAllPrivateChat}`;
+
+    const response = await api.post(url,payload,token);
+    console.log('response', response)
+    return {data:response?.data?.data, status: response?.status};
+  } catch (error) {
+    console.error('viewAllPrivateChat 1612199', error)
     throw new Error(error?.response?.data?.msg);
   }
 };

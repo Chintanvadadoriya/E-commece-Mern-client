@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, {useState } from 'react'
 import ModelUpdateProfile from '../../components/common/ModelUpdateProfile';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { UserData } from '../../redux/authSlice';
-import { getUserProfileDataApi } from '../../services/authService';
 import { getAuthHeader } from '../../constant';
+import { fetchUserProfile, selectUserProfile } from '../../redux/userProfileSlice';
 
 const userDummy={
   address:"bapasitaram chaowk",
@@ -14,29 +14,25 @@ const userDummy={
 }
 
 function UserProfileData() {
+  const profile = useSelector(selectUserProfile);
+
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
   const {token}=useSelector(UserData)
   const{address,Joined,Phone,Membership}=userDummy
-  const [user,setUser]=useState()
+  const dispatch = useDispatch();
 
 
 
   async function getUserProfile(){
     try{
-      let {data}=await getUserProfileDataApi(getAuthHeader(token))
-      setUser(data)
+     dispatch(fetchUserProfile(getAuthHeader(token)));
 
     }catch(err){
       console.error("getuserProfe 1612199",err)
     }
   }
-
-
-  useEffect(()=>{
-   getUserProfile()
-  },[])
 
   return (
     <>
@@ -48,7 +44,7 @@ function UserProfileData() {
               <h1 className="text-2xl font-bold text-white">User Profile</h1>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">{user?.name}</h1>
+              <h1 className="text-2xl font-bold text-white">{profile?.name}</h1>
             </div>
           </div>
         </div>
@@ -56,12 +52,12 @@ function UserProfileData() {
         <div className="p-6 flex flex-col md:flex-row items-center md:items-start">
           <img
             className="w-32 h-32 rounded-full border-4 border-blue-600 mb-4 md:mb-0 md:mr-6"
-            src={user?.profilePicture}
+            src={profile?.profilePicture}
             alt="User Profile"
           />
           <div className="flex-1">
-            <h2 className="text-xl font-bold mb-2">{user?.name}</h2>
-            <p className="text-gray-600 mb-4">{user?.email}</p>
+            <h2 className="text-xl font-bold mb-2">{profile?.name}</h2>
+            <p className="text-gray-600 mb-4">{profile?.email}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="text-gray-800 font-semibold">Address</h3>
@@ -87,7 +83,7 @@ function UserProfileData() {
         </div>
       </div>
     </div>
-    <ModelUpdateProfile  isOpen={isModalOpen} close={closeModal} user={user} getUserProfile={getUserProfile}/>
+    <ModelUpdateProfile  isOpen={isModalOpen} close={closeModal} user={profile} getUserProfile={getUserProfile}/>
     </>
   );
 }

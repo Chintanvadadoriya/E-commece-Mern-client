@@ -34,6 +34,8 @@ export const routerPath = {
     forgotPassword:'/auth/request-password-reset',
 
     allAdminList:'/auth/all-admin',
+    viewAllPrivateChat:'/chat',
+
 
 
 

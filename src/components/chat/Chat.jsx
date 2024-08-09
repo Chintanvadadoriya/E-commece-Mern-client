@@ -2,12 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import ChatMessage from './ChatMessage';
 import Picker from 'emoji-picker-react';
 import { useSocket } from '../../Context/SocketContext';
-import { allAdminListApi } from '../../services/authService';
+import {
+  allAdminListApi,
+  viewAllPrivateChat,
+} from '../../services/authService';
 import { UserData } from '../../redux/authSlice';
 import { useSelector } from 'react-redux';
-
-const userPhoto =
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8Ft3wkMzh_PFVQMh_W8MbSbd-ZGrBX833wVolP6kZ-kWXIL7fmQWsiU7duTvxxRyKEY8TrdjiV9-vUyqVXNH6OMQc1bX18QFP94tDlw'; // Replace with the actual path to the user's profile photo
+import { selectUserProfile } from '../../redux/userProfileSlice';
+import { getAuthHeader } from '../../constant';
 
 function Chat({ isLargeScreen }) {
   const [adminData, setAdminData] = useState([]);
@@ -19,6 +21,9 @@ function Chat({ isLargeScreen }) {
   const messagesEndRef = useRef(null);
   const { socket, connected } = useSocket();
   const { user } = useSelector(UserData);
+  const data = useSelector(selectUserProfile);
+  const { token } = useSelector(UserData);
+  const [userChat, setUserChat] = useState([]);
 
   async function showAllAdminList() {
     console.log('Chatpage userIsConnected!', connected);
@@ -31,21 +36,56 @@ function Chat({ isLargeScreen }) {
     }
   }
 
+  async function showAllPrivateMsg(payload) {
+    console.log('Chatpage userIsConnected!', connected);
+    try {
+      let { data } = await viewAllPrivateChat(payload, getAuthHeader(token));
+      setUserChat(data);
+    } catch (err) {
+      console.log('err showAll admin 1612199', err);
+    }
+  }
+
   useEffect(() => {
     showAllAdminList();
   }, []);
 
+  useEffect(() => {
+    socket?.on('private message', (data) => {
+      console.log('data incoming message', data);
+      setMessages((prevMessages) => [...prevMessages, data]);
+    });
+
+    return () => {
+      socket?.off('private message');
+    };
+  }, [socket, user]);
+
+  useEffect(() => {
+    showAllPrivateMsg({
+      senderEmail: user?.email,
+      recipientEmail: selectedUser?.email,
+    });
+  }, [selectedUser]);
+
   const handleSend = () => {
     if (input.trim()) {
       const newMessage = {
-        text: input,
+        message: input,
         isSent: true,
-        profilePhoto: userPhoto,
+        profilePhoto: data.profilePicture,
         time: new Date(),
         name: 'You', // User's name
         userId: selectedUser.id,
       };
       setMessages([...messages, newMessage]);
+      // Emit private message event to the server
+      if (socket) {
+        socket.emit('private message', {
+          to: selectedUser.email,
+          message: input,
+        });
+      }
       setInput('');
     }
   };
@@ -54,13 +94,14 @@ function Chat({ isLargeScreen }) {
     setInput((prevInput) => prevInput + emoji.emoji);
   };
 
+  console.log('selectedUser', selectedUser);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const newMessage = {
-        text: `Shared a file: ${file.name}`,
+        message: `Shared a file: ${file.name}`,
         isSent: true,
-        profilePhoto: userPhoto,
+        profilePhoto: selectedUser.profilePicture,
         time: new Date(),
         name: 'You',
         file,
@@ -97,6 +138,7 @@ function Chat({ isLargeScreen }) {
   );
 
   console.log('adminData', adminData);
+  console.log('filteredMessages', filteredMessages);
   return (
     <div
       className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6 h-full w-full`}
@@ -170,14 +212,22 @@ function Chat({ isLargeScreen }) {
           style={{ height: '600px', overflow: 'hidden' }}
         >
           <div className="flex-grow overflow-y-auto" style={{ height: '80%' }}>
-            {filteredMessages.map((msg, index) => (
+            {userChat.map((msg, index) => (
               <ChatMessage
                 key={index}
-                message={msg.text}
-                isSent={msg.isSent}
-                profilePhoto={msg.profilePhoto}
-                time={msg.time}
-                name={msg.name}
+                message={msg.message}
+                isSent={user.email === msg.senderEmail}
+                profilePhoto={
+                  user.email === msg.senderEmail
+                    ? data.profilePicture
+                    : selectedUser.profilePicture
+                }
+                time={msg.timestamp}
+                name={
+                  user.email === msg.senderEmail
+                    ? data?.name
+                    : selectedUser?.name
+                }
                 file={msg.file}
               />
             ))}

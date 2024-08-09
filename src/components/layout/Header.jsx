@@ -2,15 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AiOutlineBars } from 'react-icons/ai';
 import ModelChangePassword from '../common/ModelChangePassword';
 import { Link, useNavigate } from 'react-router-dom';
-import { logout } from '../../redux/authSlice';
-import { useDispatch } from 'react-redux';
+import { logout, UserData } from '../../redux/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import useToast from '../../hook/useToaster';
 import NotificationDropdown from '../NotificationDropdown';
+import {
+  fetchUserProfile,
+  selectUserProfile,
+} from '../../redux/userProfileSlice';
+import { getAuthHeader } from '../../constant';
 
 const Header = ({ toggleSidebar, isOpen }) => {
   const dispatch = useDispatch();
-  const showToast = useToast();
+  const data = useSelector(selectUserProfile);
+  const { token, user } = useSelector(UserData);
 
+  const showToast = useToast();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isDropdownOpenNotification, setDropdownOpenNotification] =
@@ -67,6 +74,10 @@ const Header = ({ toggleSidebar, isOpen }) => {
     showToast('success', 'You have successfully Logout!.');
     navigate('/');
   };
+
+  useEffect(() => {
+    dispatch(fetchUserProfile(getAuthHeader(token)));
+  }, [token, user]);
 
   return (
     <header className="bg-blue-600 text-white p-4">
@@ -137,7 +148,7 @@ const Header = ({ toggleSidebar, isOpen }) => {
           <span ref={dropdownRef}>
             <img
               alt="no img"
-              src="https://t3.ftcdn.net/jpg/02/35/66/18/240_F_235661801_1OQkjM3o8zAtgnhdbPsRXKhs82a7XIkO.jpg" // Use a high-resolution image
+              src={data?.profilePicture} // Use a high-resolution image
               onClick={handleUserIconClick}
               className="w-[40px] h-[40px] text-gray-800 dark:text-white cursor-pointer rounded-full border-2 border-gray-300 shadow-lg transition-transform transform hover:scale-110 object-cover"
             />

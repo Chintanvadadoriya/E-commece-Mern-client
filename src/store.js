@@ -3,6 +3,8 @@ import authReducer from './redux/authSlice';
 import adminReducer from './redux/adminSlice';
 import productListReducer from './redux/productListSlice';
 import orderListListReducer from './redux/orderListSlice';
+import userProfileReducer from './redux/userProfileSlice';
+
 
 
 
@@ -12,7 +14,8 @@ const store = configureStore({
     auth: authReducer,
     adminList: adminReducer,
     productList: productListReducer,
-    orderList: orderListListReducer
+    orderList: orderListListReducer,
+    userProfile:userProfileReducer
   },
 });
 
