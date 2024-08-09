@@ -13,13 +13,12 @@ import { getAuthHeader } from '../../constant';
 
 function Chat({ isLargeScreen }) {
   const [adminData, setAdminData] = useState([]);
-  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedUser, setSelectedUser] = useState();
   const [isUserListExpanded, setIsUserListExpanded] = useState(false);
   const messagesEndRef = useRef(null);
-  const { socket, connected } = useSocket();
+  const { socket } = useSocket();
   const { user } = useSelector(UserData);
   const data = useSelector(selectUserProfile);
   const { token } = useSelector(UserData);
@@ -29,7 +28,7 @@ function Chat({ isLargeScreen }) {
     try {
       let { data } = await allAdminListApi();
       setAdminData(data);
-      setSelectedUser(data[0]);
+      // setSelectedUser(data[0]);
     } catch (err) {
       console.log('err showAll admin 1612199', err);
     }
@@ -108,6 +107,8 @@ function Chat({ isLargeScreen }) {
         name: 'You',
         file,
         userId: selectedUser.id,
+        senderEmail: user.email, // Ensure senderEmail is correctly set
+        recipientEmail: selectedUser.email,
       };
       setUserChat([...userChat, newMessage]);
       e.target.value = null; // Clear the file input
@@ -133,6 +134,8 @@ function Chat({ isLargeScreen }) {
   const handleUserClick = (user) => {
     setSelectedUser(user);
   };
+
+  console.log('selectedUser', selectedUser);
 
   return (
     <div
@@ -173,7 +176,7 @@ function Chat({ isLargeScreen }) {
                   <li
                     key={adminUser.email}
                     className={`relative p-4 mb-3 cursor-pointer rounded-lg flex items-center ${
-                      adminUser.email === selectedUser.email
+                      adminUser?.email === selectedUser?.email
                         ? 'bg-gray-600 text-white'
                         : 'bg-white text-gray-700'
                     }`}
@@ -185,14 +188,14 @@ function Chat({ isLargeScreen }) {
                       className="inline-block w-8 h-8 rounded-full mr-2"
                     />
                     <div>
-                      {adminUser.name === user.name ? 'You' : adminUser.name}
+                      {adminUser?.name === user?.name ? 'You' : adminUser?.name}
                       {/* {5 > 0 && (
                         <span className="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                           5
                         </span>
                       )} */}
                     </div>
-                    {adminUser.email === selectedUser.email && (
+                    {adminUser?.email === selectedUser?.email && (
                       <span className="absolute top-1 left-1 bg-green-500 w-3 h-3 rounded-full"></span>
                     )}
                   </li>
@@ -202,84 +205,99 @@ function Chat({ isLargeScreen }) {
           </ul>
         </div>
 
-        <div
-          className="flex flex-col p-4 bg-gray-100 w-3/4 ml-4 rounded-lg"
-          style={{ height: '600px', overflow: 'hidden' }}
-        >
-          <div className="flex-grow overflow-y-auto" style={{ height: '80%' }}>
-            {userChat.map((msg, index) => (
-              <ChatMessage
-                key={index}
-                message={msg.message}
-                isSent={user.email === msg.senderEmail}
-                profilePhoto={
-                  user.email === msg.senderEmail
-                    ? data.profilePicture
-                    : selectedUser.profilePicture
-                }
-                time={msg.timestamp}
-                name={
-                  user.email === msg.senderEmail
-                    ? data?.name
-                    : selectedUser?.name
-                }
-                file={msg.file}
-              />
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-          <div className="flex items-center mt-4">
-            <button
-              onClick={() => setShowEmojiPicker((val) => !val)}
-              className="mr-2 p-2 bg-gray-200 text-black rounded-lg"
+        {selectedUser ? (
+          <div
+            className="flex flex-col p-4 bg-gray-100 w-3/4 ml-4 rounded-lg"
+            style={{ height: '600px', overflow: 'hidden' }}
+          >
+            <div
+              className="flex-grow overflow-y-auto"
+              style={{ height: '80%' }}
             >
-              😊
-            </button>
-            {showEmojiPicker && <Picker onEmojiClick={handleEmojiSelect} />}
-            <input
-              type="file"
-              onChange={handleFileChange}
-              className="hidden"
-              id="fileInput"
-            />
-            <label
-              htmlFor="fileInput"
-              className="mr-2 p-2 bg-gray-200 text-black rounded-lg cursor-pointer"
-            >
-              <svg
-                className="w-6 h-6 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 5v9m-5 0H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2M8 9l4-5 4 5m1 8h.01"
+              {userChat.map((msg, index) => (
+                <ChatMessage
+                  key={index}
+                  message={msg.message}
+                  isSent={user.email === msg.senderEmail}
+                  profilePhoto={
+                    user.email === msg.senderEmail
+                      ? data.profilePicture
+                      : selectedUser.profilePicture
+                  }
+                  time={msg.timestamp}
+                  name={
+                    user.email === msg.senderEmail ? 'You' : selectedUser?.name
+                  }
+                  file={msg.file}
                 />
-              </svg>
-            </label>
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="flex-grow p-2 border border-gray-300 rounded-lg"
-              placeholder="Type your message..."
-            />
-            <button
-              onClick={handleSend}
-              className="ml-2 p-2 bg-blue-500 text-white rounded-lg"
-            >
-              Send
-            </button>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+            <div className="flex items-center mt-4">
+              <button
+                onClick={() => setShowEmojiPicker((val) => !val)}
+                className="mr-2 p-2 bg-gray-200 text-black rounded-lg"
+              >
+                😊
+              </button>
+              {showEmojiPicker && <Picker onEmojiClick={handleEmojiSelect} />}
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="hidden"
+                id="fileInput"
+              />
+              <label
+                htmlFor="fileInput"
+                className="mr-2 p-2 bg-gray-200 text-black rounded-lg cursor-pointer"
+              >
+                <svg
+                  className="w-6 h-6 text-gray-800 dark:text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 5v9m-5 0H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2M8 9l4-5 4 5m1 8h.01"
+                  />
+                </svg>
+              </label>
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="flex-grow p-2 border border-gray-300 rounded-lg"
+                placeholder="Type your message..."
+              />
+              <button
+                onClick={handleSend}
+                className="ml-2 p-2 bg-blue-500 text-white rounded-lg"
+              >
+                Send
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div
+            className="flex flex-col p-4 bg-gray-100 w-3/4 ml-4 rounded-lg"
+            style={{ height: '600px', overflow: 'hidden' }}
+          >
+            <div
+              className="flex flex-grow overflow-y-auto justify-center items-center"
+              style={{ height: '80%' }}
+            >
+              <h1>Select a conversation to start chatting !</h1>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -18,7 +18,6 @@ export const SocketProvider = ({ children }) => {
 
     newSocket.on('connect', () => {
       setConnected(true);
-      console.log('Socket connected:', newSocket.id);
 
       if (user && user.email) {
         newSocket.emit('login', user.email);

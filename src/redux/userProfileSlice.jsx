@@ -13,7 +13,6 @@ export const fetchUserProfile = createAsyncThunk(
   async (token, { getState, rejectWithValue }) => {
     try {
       const response = await getUserProfileDataApi(token);
-      console.log('response fetchUserProfile', response);
       return response.data;
     } catch (error) {
       console.error('Fetch User Profile error:', error.message);
