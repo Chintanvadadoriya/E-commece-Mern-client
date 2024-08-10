@@ -18,11 +18,13 @@ function Chat({ isLargeScreen }) {
   const [selectedUser, setSelectedUser] = useState();
   const [isUserListExpanded, setIsUserListExpanded] = useState(false);
   const messagesEndRef = useRef(null);
-  const { socket } = useSocket();
+  const { socket, activeUsers } = useSocket();
   const { user } = useSelector(UserData);
   const data = useSelector(selectUserProfile);
   const { token } = useSelector(UserData);
   const [userChat, setUserChat] = useState([]);
+
+  console.log('activeUsers', activeUsers);
 
   async function showAllAdminList() {
     try {
@@ -195,8 +197,10 @@ function Chat({ isLargeScreen }) {
                         </span>
                       )} */}
                     </div>
-                    {adminUser?.email === selectedUser?.email && (
+                    {activeUsers.includes(adminUser?.email) ? (
                       <span className="absolute top-1 left-1 bg-green-500 w-3 h-3 rounded-full"></span>
+                    ) : (
+                      <span className="absolute top-1 left-1 bg-yellow-400 w-3 h-3 rounded-full"></span>
                     )}
                   </li>
                 );

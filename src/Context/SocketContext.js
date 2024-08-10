@@ -10,6 +10,8 @@ export const useSocket = () => useContext(SocketContext);
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [connected, setConnected] = useState(false);
+  const [activeUsers, setActiveUsers] = useState([]);
+
 
   const { user } = useSelector(UserData);
   useEffect(() => {
@@ -34,10 +36,22 @@ export const SocketProvider = ({ children }) => {
     };
   }, [user]);
 
+    useEffect(() => {
+    // Listen for active users updates
+    socket?.on('active users', (users) => {
+      setActiveUsers(users);
+    });
+
+    // Handle cleanup on component unmount
+    return () => {
+      socket?.off('active users');
+    };
+  }, [socket]);
+
   console.log('SocketContext establish 1612199', connected);
 
   return (
-    <SocketContext.Provider value={{ socket, connected }}>
+    <SocketContext.Provider value={{ socket, connected,activeUsers }}>
       {children}
     </SocketContext.Provider>
   );
