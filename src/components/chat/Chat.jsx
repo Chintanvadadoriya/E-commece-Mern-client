@@ -79,10 +79,13 @@ function Chat({ isLargeScreen }) {
   }, []);
 
   useEffect(() => {
+    console.log('selectedUser', selectedUser);
     socket?.on('private message', (data) => {
-      console.log('data recive message', data, user.email !== data.from);
+      // console.log('data recive message', data, selectedUser?.email, data?.from);
       if (user.email !== data.from) {
-        setUserChat((prevMessages) => [...prevMessages, data]);
+        if (selectedUser?.email === data?.from) {
+          setUserChat((prevMessages) => [...prevMessages, data]);
+        }
         getAllUnreadMsgCount();
       }
     });
@@ -90,7 +93,7 @@ function Chat({ isLargeScreen }) {
     return () => {
       socket?.off('private message');
     };
-  }, [socket, user]);
+  }, [socket, user, selectedUser]);
 
   useEffect(() => {
     showAllPrivateMsg({
