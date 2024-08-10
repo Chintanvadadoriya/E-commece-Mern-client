@@ -35,11 +35,8 @@ export const routerPath = {
 
     allAdminList:'/auth/all-admin',
     viewAllPrivateChat:'/chat',
-
-
-
-
-
+    getAllUnreadMessagesCout:"/chat/un-readed-messages",
+    updatAllUnreadMessagesCout:"/chat/update-un-readed-messages",
 
 
 

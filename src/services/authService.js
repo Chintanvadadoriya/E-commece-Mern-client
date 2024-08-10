@@ -320,10 +320,34 @@ export const viewAllPrivateChat = async (payload,token) => {
     const url = `${routerPath.viewAllPrivateChat}`;
 
     const response = await api.post(url,payload,token);
-    console.log('response', response)
     return {data:response?.data?.data, status: response?.status};
   } catch (error) {
     console.error('viewAllPrivateChat 1612199', error)
     throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const getAllUnreadedMsgCountListApi = async (payload,token) => {
+  try {
+    const url = `${routerPath.getAllUnreadMessagesCout}`;
+    const response = await api.post(url,payload,token);
+    return {data:response?.data?.unreadCounts, status: response?.status};
+  } catch (error) {
+    console.error('getAllUnreadedMsgCountListApi 1612199', error)
+    throw new Error(error?.response);
+  }
+};
+
+
+export const updateUnreadedMsgCountApi = async (payload,token) => {
+  try {
+   
+    const url = `${routerPath.updatAllUnreadMessagesCout}`;
+
+    const response = await api.put(url,payload,token);
+    return {data:response?.data?.count, status: response?.status};
+  } catch (error) {
+    console.error('updateUnreadedMsgCountApi 1612199', error)
+    throw new Error(error?.response?.data);
   }
 };

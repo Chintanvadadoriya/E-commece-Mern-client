@@ -4,6 +4,8 @@ import Picker from 'emoji-picker-react';
 import { useSocket } from '../../Context/SocketContext';
 import {
   allAdminListApi,
+  getAllUnreadedMsgCountListApi,
+  updateUnreadedMsgCountApi,
   viewAllPrivateChat,
 } from '../../services/authService';
 import { UserData } from '../../redux/authSlice';
@@ -23,8 +25,7 @@ function Chat({ isLargeScreen }) {
   const data = useSelector(selectUserProfile);
   const { token } = useSelector(UserData);
   const [userChat, setUserChat] = useState([]);
-
-  console.log('activeUsers', activeUsers);
+  const [unReadCountMsg, setUnReadCountMsg] = useState([]);
 
   async function showAllAdminList() {
     try {
@@ -45,6 +46,34 @@ function Chat({ isLargeScreen }) {
     }
   }
 
+  async function getAllUnreadMsgCount() {
+    try {
+      let payload = {
+        recipientEmail: user?.email,
+      };
+      let { data } = await getAllUnreadedMsgCountListApi(
+        payload,
+        getAuthHeader(token)
+      );
+      setUnReadCountMsg(data);
+    } catch (err) {
+      console.log('err getAllUnreadMsgCount 1612199', err);
+    }
+  }
+
+  async function updatAllUnreadMsgCount(sender) {
+    try {
+      let payload = {
+        senderEmail: sender,
+        recipientEmail: user?.email,
+      };
+      await updateUnreadedMsgCountApi(payload, getAuthHeader(token));
+      getAllUnreadMsgCount();
+    } catch (err) {
+      console.log('err updatAllUnreadMsgCount 1612199', err);
+    }
+  }
+
   useEffect(() => {
     showAllAdminList();
   }, []);
@@ -54,6 +83,7 @@ function Chat({ isLargeScreen }) {
       console.log('data recive message', data, user.email !== data.from);
       if (user.email !== data.from) {
         setUserChat((prevMessages) => [...prevMessages, data]);
+        getAllUnreadMsgCount();
       }
     });
 
@@ -137,7 +167,19 @@ function Chat({ isLargeScreen }) {
     setSelectedUser(user);
   };
 
-  console.log('selectedUser', selectedUser);
+  useEffect(() => {
+    getAllUnreadMsgCount();
+  }, []);
+
+  useEffect(() => {
+    if (selectedUser) {
+      updatAllUnreadMsgCount(selectedUser?.email);
+    }
+  }, [selectedUser, userChat]);
+
+  const findUnreaderSenderMsg = (email) => {
+    return unReadCountMsg.find((item) => item.senderEmail === email);
+  };
 
   return (
     <div
@@ -174,6 +216,10 @@ function Chat({ isLargeScreen }) {
           >
             {(isUserListExpanded ? adminData : adminData.slice(0, 7)).map(
               (adminUser) => {
+                //user.email !== adminUser.email remove own unread count
+                const userCountMsg =
+                  user.email !== adminUser.email &&
+                  findUnreaderSenderMsg(adminUser?.email);
                 return (
                   <li
                     key={adminUser.email}
@@ -191,11 +237,11 @@ function Chat({ isLargeScreen }) {
                     />
                     <div>
                       {adminUser?.name === user?.name ? 'You' : adminUser?.name}
-                      {/* {5 > 0 && (
-                        <span className="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                          5
+                      {userCountMsg && (
+                        <span className="ml-14 bg-green-500 text-black text-xs font-bold px-2 py-1 rounded-full">
+                          {userCountMsg?.count || ' '}
                         </span>
-                      )} */}
+                      )}
                     </div>
                     {activeUsers.includes(adminUser?.email) ? (
                       <span className="absolute top-1 left-1 bg-green-500 w-3 h-3 rounded-full"></span>
