@@ -351,3 +351,13 @@ export const updateUnreadedMsgCountApi = async (payload,token) => {
     throw new Error(error?.response?.data);
   }
 };
+
+export const shareFileHandlingApi=async(payload)=>{
+  try{
+     const url = `${routerPath.shareFilesHandling}`;
+     const response = await api.post(url,payload);
+    return {fileUrl:response?.data?.fileUrl, status: response?.status};
+  }catch(err){
+    console.log("shareFileHandlingApi",err)
+  }
+}

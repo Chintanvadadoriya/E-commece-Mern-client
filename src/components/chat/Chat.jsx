@@ -5,6 +5,7 @@ import { useSocket } from '../../Context/SocketContext';
 import {
   allAdminListApi,
   getAllUnreadedMsgCountListApi,
+  shareFileHandlingApi,
   updateUnreadedMsgCountApi,
   viewAllPrivateChat,
 } from '../../services/authService';
@@ -131,22 +132,48 @@ function Chat({ isLargeScreen }) {
     setInput((prevInput) => prevInput + emoji.emoji);
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const newMessage = {
-        message: `Shared a file: ${file.name}`,
-        isSent: true,
-        profilePhoto: selectedUser.profilePicture,
-        time: new Date(),
-        name: 'You',
-        file,
-        userId: selectedUser.id,
-        senderEmail: user.email, // Ensure senderEmail is correctly set
-        recipientEmail: selectedUser.email,
-      };
-      setUserChat([...userChat, newMessage]);
-      e.target.value = null; // Clear the file input
+      try {
+        // Upload the file to the server
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await shareFileHandlingApi(formData);
+
+        console.log('response', response);
+        const data = response.fileUrl;
+        console.log('fileUrl', data);
+
+        const newMessage = {
+          message: `Shared a file: ${file.name}`,
+          isSent: true,
+          profilePhoto: selectedUser.profilePicture,
+          time: new Date(),
+          name: 'You',
+          fileName: file.name,
+          userId: selectedUser.id,
+          senderEmail: user.email,
+          recipientEmail: selectedUser.email,
+          fileUrl: data, // URL of the uploaded file
+        };
+
+        console.log('newMessage', newMessage);
+        // Send the message and file URL via Socket.IO
+        socket.emit('private message', {
+          to: selectedUser.email,
+          message: newMessage.message,
+          fileUrl: data,
+          fileName: file.name,
+        });
+
+        // Update the chat UI with the new message
+        setUserChat([...userChat, newMessage]);
+        e.target.value = null; // Clear the file input
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
     }
   };
 
@@ -281,7 +308,7 @@ function Chat({ isLargeScreen }) {
                   name={
                     user.email === msg.senderEmail ? 'You' : selectedUser?.name
                   }
-                  file={msg.file}
+                  file={msg.fileUrl}
                 />
               ))}
               <div ref={messagesEndRef} />
