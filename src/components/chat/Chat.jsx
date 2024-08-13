@@ -80,7 +80,6 @@ function Chat({ isLargeScreen }) {
   }, []);
 
   useEffect(() => {
-    console.log('selectedUser', selectedUser);
     socket?.on('private message', (data) => {
       // console.log('data recive message', data, selectedUser?.email, data?.from);
       if (user.email !== data.from) {
@@ -142,9 +141,7 @@ function Chat({ isLargeScreen }) {
 
         const response = await shareFileHandlingApi(formData);
 
-        console.log('response', response);
         const data = response.fileUrl;
-        console.log('fileUrl', data);
 
         const newMessage = {
           message: `Shared a file: ${file.name}`,
@@ -157,15 +154,16 @@ function Chat({ isLargeScreen }) {
           senderEmail: user.email,
           recipientEmail: selectedUser.email,
           fileUrl: data, // URL of the uploaded file
+          fileType: file?.type,
         };
 
-        console.log('newMessage', newMessage);
         // Send the message and file URL via Socket.IO
         socket.emit('private message', {
           to: selectedUser.email,
           message: newMessage.message,
           fileUrl: data,
           fileName: file.name,
+          fileType: file?.type,
         });
 
         // Update the chat UI with the new message
@@ -309,6 +307,7 @@ function Chat({ isLargeScreen }) {
                     user.email === msg.senderEmail ? 'You' : selectedUser?.name
                   }
                   file={msg.fileUrl}
+                  fileType={msg.fileType}
                 />
               ))}
               <div ref={messagesEndRef} />

@@ -38,7 +38,9 @@ export const routerPath = {
     getAllUnreadMessagesCout:"/chat/un-readed-messages",
     updatAllUnreadMessagesCout:"/chat/update-un-readed-messages",
 
-    shareFilesHandling:'/auth/upload-file'
+    shareFilesHandling:'/auth/upload-file',
+    downLoadshareFiles:'/auth/download-file'
+
 
 
 

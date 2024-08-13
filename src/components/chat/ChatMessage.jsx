@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
+import { downLoadSharingsFileApi } from '../../services/authService';
+import { saveAs } from 'file-saver';
 
-function ChatMessage({ message, isSent, profilePhoto, time, name, file }) {
+function removeUploadsPrefix(filePath) {
+  return filePath.replace('/uploads/', '');
+}
+function ChatMessage({
+  message,
+  isSent,
+  profilePhoto,
+  time,
+  name,
+  file,
+  fileType,
+}) {
   const [fileUrl, setFileUrl] = useState(null);
-  const [fileType, setFileType] = useState(null);
   useEffect(() => {
     if (file) {
       if (file instanceof Blob || file instanceof File) {
         const url = URL.createObjectURL(file);
         setFileUrl(url);
-        setFileType(file.type);
 
         // Clean up the object URL when the component unmounts or when the file changes
         return () => URL.revokeObjectURL(url);
@@ -21,74 +32,145 @@ function ChatMessage({ message, isSent, profilePhoto, time, name, file }) {
     }
   }, [file]);
 
+  const handleDownload = async (e) => {
+    e.preventDefault();
+    let filename = removeUploadsPrefix(fileUrl);
+    try {
+      const response = await downLoadSharingsFileApi(filename);
+      // Use file-saver to save the file as Blob
+      saveAs(response.data, filename);
+    } catch (error) {
+      console.error('Error downloading the file:', error);
+    }
+  };
+
   const renderFilePreview = () => {
-    // if (!fileUrl || !fileType) return null;
+    if (!fileUrl || !fileType) return null;
 
-    // if (fileType.startsWith('image/')) {
-    //   return (
-    //     <img src={fileUrl} alt="File preview" className="max-w-xs max-h-60" />
-    //   );
-    // }
+    if (fileType.startsWith('image/')) {
+      return (
+        <div className="relative">
+          <img
+            src={
+              fileUrl.startsWith('blob:')
+                ? fileUrl
+                : `http://localhost:4000${fileUrl}`
+            }
+            alt="File preview"
+            className="max-w-xs max-h-60 rounded-lg"
+          />
+          <button
+            onClick={handleDownload}
+            className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded-full"
+          >
+            Download
+          </button>
+        </div>
+      );
+    }
 
-    // // Add handling for PDF files
-    // if (fileType.startsWith('application/pdf')) {
-    //   return (
-    //     <embed
-    //       src={fileUrl}
-    //       type="application/pdf"
-    //       className="max-w-xs max-h-60"
-    //     />
-    //   );
-    // }
+    if (fileType.startsWith('application/pdf')) {
+      return (
+        <div className="relative">
+          <embed
+            src={
+              fileUrl.startsWith('blob:')
+                ? fileUrl
+                : `http://localhost:4000${fileUrl}`
+            }
+            type="application/pdf"
+            className="max-w-xs max-h-60 rounded-lg"
+          />
+          <button
+            onClick={handleDownload}
+            className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded-full"
+          >
+            Download
+          </button>
+        </div>
+      );
+    }
 
-    // // Add handling for audio files
-    // if (fileType.startsWith('audio/')) {
-    //   return <audio controls src={fileUrl} className="max-w-xs" />;
-    // }
+    if (fileType.startsWith('audio/')) {
+      return (
+        <div className="relative">
+          <audio
+            controls
+            src={
+              fileUrl.startsWith('blob:')
+                ? fileUrl
+                : `http://localhost:4000${fileUrl}`
+            }
+            className="max-w-xs"
+          />
+          <button
+            onClick={handleDownload}
+            className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded-full"
+          >
+            Download
+          </button>
+        </div>
+      );
+    }
 
-    // // Add handling for video files
-    // if (fileType.startsWith('video/')) {
-    //   return <video controls src={fileUrl} className="max-w-xs max-h-60" />;
-    // }
+    if (fileType.startsWith('video/')) {
+      return (
+        <div className="relative">
+          <video
+            controls
+            src={
+              fileUrl.startsWith('blob:')
+                ? fileUrl
+                : `http://localhost:4000${fileUrl}`
+            }
+            className="max-w-xs max-h-60 rounded-lg"
+          />
+          <button
+            onClick={handleDownload}
+            className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded-full"
+          >
+            Download
+          </button>
+        </div>
+      );
+    }
 
-    // Fallback for other file types
     return (
-      // <a
-      //   href={fileUrl}
-      //   download={file.name}
-      //   className="text-blue-700 underline"
-      // >
-      //   {file.name}
-      // </a>
-      <img
-        src={`http://localhost:4000${fileUrl}`}
-        alt="File preview"
-        className="max-w-xs max-h-60"
-      />
+      <div className="text-center">
+        <a
+          href={
+            fileUrl.startsWith('blob:')
+              ? fileUrl
+              : `http://localhost:4000${fileUrl}`
+          }
+          download={file.name}
+          onClick={handleDownload}
+          className="text-blue-700 underline"
+        >
+          {file.name}
+        </a>
+      </div>
     );
   };
 
-  // console.log('fileUrl', fileUrl);
-  // console.log('file', file);
-
   return (
-    <div className={`flex ${isSent ? 'justify-end' : 'justify-start'} mb-2`}>
+    <div className={`flex ${isSent ? 'justify-end' : 'justify-start'} mb-4`}>
       {!isSent && (
         <img
           src={profilePhoto}
           alt="Profile"
-          className="w-8 h-8 rounded-full mr-2"
+          className="w-10 h-10 rounded-full mr-3"
         />
       )}
       <div>
         <div className="text-xs text-gray-500 mt-1 text-left">{name}</div>
         <div
-          className={`p-2 rounded-lg ${
+          className={`p-3 rounded-lg ${
             isSent ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
-          }`}
+          } max-w-xs`}
         >
           {file && <div className="mt-2">{renderFilePreview()}</div>}
-          {message}
+          <p className="mt-2">{message}</p>
         </div>
         <div className="text-xs text-gray-500 mt-1 text-right">
           {moment(time).fromNow()} ({moment(time).format('h:mm A')})
@@ -98,7 +180,7 @@ function ChatMessage({ message, isSent, profilePhoto, time, name, file }) {
         <img
           src={profilePhoto}
           alt="Profile"
-          className="w-8 h-8 rounded-full ml-2"
+          className="w-10 h-10 rounded-full ml-3"
         />
       )}
     </div>

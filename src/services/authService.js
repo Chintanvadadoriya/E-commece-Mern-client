@@ -361,3 +361,17 @@ export const shareFileHandlingApi=async(payload)=>{
     console.log("shareFileHandlingApi",err)
   }
 }
+
+export const downLoadSharingsFileApi=async(filename)=>{
+  
+  try{
+     const url = `${routerPath.downLoadshareFiles}`;
+     const response = await api.get(url, {
+          params: { filename: filename },
+          responseType: 'blob', // Request the response as a Blob
+        });
+    return response
+  }catch(err){
+    console.log("downLoadSharingsFileApi",err)
+  }
+}
