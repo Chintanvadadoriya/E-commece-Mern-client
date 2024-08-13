@@ -32,6 +32,7 @@ function ChatMessage({
     }
   }, [file]);
 
+  let socketBaseUrl = process.env.REACT_APP_SOCKET_URL;
   const handleDownload = async (e) => {
     e.preventDefault();
     let filename = removeUploadsPrefix(fileUrl);
@@ -54,7 +55,7 @@ function ChatMessage({
             src={
               fileUrl.startsWith('blob:')
                 ? fileUrl
-                : `http://localhost:4000${fileUrl}`
+                : `${socketBaseUrl}${fileUrl}`
             }
             alt="File preview"
             className="max-w-xs max-h-60 rounded-lg"
@@ -76,7 +77,7 @@ function ChatMessage({
             src={
               fileUrl.startsWith('blob:')
                 ? fileUrl
-                : `http://localhost:4000${fileUrl}`
+                : `${socketBaseUrl}${fileUrl}`
             }
             type="application/pdf"
             className="max-w-xs max-h-60 rounded-lg"
@@ -99,7 +100,7 @@ function ChatMessage({
             src={
               fileUrl.startsWith('blob:')
                 ? fileUrl
-                : `http://localhost:4000${fileUrl}`
+                : `${socketBaseUrl}${fileUrl}`
             }
             className="max-w-xs"
           />
@@ -121,7 +122,7 @@ function ChatMessage({
             src={
               fileUrl.startsWith('blob:')
                 ? fileUrl
-                : `http://localhost:4000${fileUrl}`
+                : `${socketBaseUrl}${fileUrl}`
             }
             className="max-w-xs max-h-60 rounded-lg"
           />
@@ -139,9 +140,7 @@ function ChatMessage({
       <div className="text-center">
         <a
           href={
-            fileUrl.startsWith('blob:')
-              ? fileUrl
-              : `http://localhost:4000${fileUrl}`
+            fileUrl.startsWith('blob:') ? fileUrl : `${socketBaseUrl}${fileUrl}`
           }
           download={file.name}
           onClick={handleDownload}
