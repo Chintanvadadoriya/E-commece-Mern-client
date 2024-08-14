@@ -27,12 +27,13 @@ function Chat({ isLargeScreen }) {
   const { token } = useSelector(UserData);
   const [userChat, setUserChat] = useState([]);
   const [unReadCountMsg, setUnReadCountMsg] = useState([]);
+  const [isTyping, setIsTyping] = useState(false); // New state for typing indicator
+  const typingTimeoutRef = useRef(null); // Reference for typing timeout
 
   async function showAllAdminList() {
     try {
       let { data } = await allAdminListApi();
       setAdminData(data);
-      // setSelectedUser(data[0]);
     } catch (err) {
       console.log('err showAll admin 1612199', err);
     }
@@ -44,6 +45,29 @@ function Chat({ isLargeScreen }) {
       setUserChat(data);
     } catch (err) {
       console.log('err showAll admin 1612199', err);
+    }
+  }
+
+  // Emit typing event when the user starts typing
+  async function handleTyping(recipientEmail) {
+    if (socket) {
+      socket.emit('typing', { to: recipientEmail });
+
+      // Reset the typing timeout to prevent multiple emissions
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      typingTimeoutRef.current = setTimeout(() => {
+        handleStopTyping(recipientEmail);
+      }, 4000); // Stop typing after 4 seconds of no input
+    }
+  }
+
+  // Emit stop typing event
+  async function handleStopTyping(recipientEmail) {
+    if (socket) {
+      socket.emit('stop typing', { to: recipientEmail });
     }
   }
 
@@ -81,7 +105,6 @@ function Chat({ isLargeScreen }) {
 
   useEffect(() => {
     socket?.on('private message', (data) => {
-      // console.log('data recive message', data, selectedUser?.email, data?.from);
       if (user.email !== data.from) {
         if (selectedUser?.email === data?.from) {
           setUserChat((prevMessages) => [...prevMessages, data]);
@@ -90,8 +113,24 @@ function Chat({ isLargeScreen }) {
       }
     });
 
+    // Listen for typing events from the server
+    socket?.on('typing', (data) => {
+      if (data.from === selectedUser?.email) {
+        setIsTyping(true);
+      }
+    });
+
+    // Listen for stop typing events from the server
+    socket?.on('stop typing', (data) => {
+      if (data.from === selectedUser?.email) {
+        setIsTyping(false);
+      }
+    });
+
     return () => {
       socket?.off('private message');
+      socket?.off('typing');
+      socket?.off('stop typing');
     };
   }, [socket, user, selectedUser]);
 
@@ -109,21 +148,23 @@ function Chat({ isLargeScreen }) {
         isSent: true,
         profilePhoto: data.profilePicture,
         time: new Date(),
-        name: 'You', // User's name
+        name: 'You',
         userId: selectedUser.id,
-        senderEmail: user.email, // Ensure senderEmail is correctly set
+        senderEmail: user.email,
         recipientEmail: selectedUser.email,
       };
-      // setUserChat([...userChat, newMessage]);
+
       setUserChat((prevMessages) => [...prevMessages, newMessage]);
-      // Emit private message event to the server
+
       if (socket) {
         socket.emit('private message', {
           to: selectedUser.email,
           message: input,
         });
       }
+
       setInput('');
+      handleStopTyping(selectedUser.email); // Stop typing after sending the message
     }
   };
 
@@ -135,7 +176,6 @@ function Chat({ isLargeScreen }) {
     const file = e.target.files[0];
     if (file) {
       try {
-        // Upload the file to the server
         const formData = new FormData();
         formData.append('file', file);
 
@@ -153,11 +193,10 @@ function Chat({ isLargeScreen }) {
           userId: selectedUser.id,
           senderEmail: user.email,
           recipientEmail: selectedUser.email,
-          fileUrl: data, // URL of the uploaded file
+          fileUrl: data,
           fileType: file?.type,
         };
 
-        // Send the message and file URL via Socket.IO
         socket.emit('private message', {
           to: selectedUser.email,
           message: newMessage.message,
@@ -166,9 +205,8 @@ function Chat({ isLargeScreen }) {
           fileType: file?.type,
         });
 
-        // Update the chat UI with the new message
         setUserChat([...userChat, newMessage]);
-        e.target.value = null; // Clear the file input
+        e.target.value = null;
       } catch (error) {
         console.error('Error uploading file:', error);
       }
@@ -178,6 +216,8 @@ function Chat({ isLargeScreen }) {
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSend();
+    } else {
+      handleTyping(selectedUser.email);
     }
   };
 
@@ -211,10 +251,11 @@ function Chat({ isLargeScreen }) {
 
   return (
     <div
-      className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6 h-full w-full`}
+      className={`${
+        isLargeScreen ? 'custom-container' : ''
+      } container mx-auto p-6 h-full w-full`}
     >
       <div className="text-2xl font-semibold mb-6 flex justify-center mb-10">
-        {/* Chat with {selectedUser?.name} */}
         <span>
           {`Chat with `}
           {selectedUser?.name || `Admin`}
@@ -244,7 +285,6 @@ function Chat({ isLargeScreen }) {
           >
             {(isUserListExpanded ? adminData : adminData.slice(0, 7)).map(
               (adminUser) => {
-                //user.email !== adminUser.email remove own unread count
                 const userCountMsg =
                   user.email !== adminUser.email &&
                   findUnreaderSenderMsg(adminUser?.email);
@@ -312,6 +352,11 @@ function Chat({ isLargeScreen }) {
               ))}
               <div ref={messagesEndRef} />
             </div>
+            {isTyping && (
+              <div className="typing-indicator">
+                {selectedUser?.name} is typing...
+              </div>
+            )}
             <div className="flex items-center mt-4">
               <button
                 onClick={() => setShowEmojiPicker((val) => !val)}
