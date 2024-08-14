@@ -29,6 +29,7 @@ function Chat({ isLargeScreen }) {
   const [unReadCountMsg, setUnReadCountMsg] = useState([]);
   const [isTyping, setIsTyping] = useState(false); // New state for typing indicator
   const typingTimeoutRef = useRef(null); // Reference for typing timeout
+  const [isTypingSenderUser, setIsTypingSenderUse] = useState(null);
 
   async function showAllAdminList() {
     try {
@@ -52,6 +53,7 @@ function Chat({ isLargeScreen }) {
   async function handleTyping(recipientEmail) {
     if (socket) {
       socket.emit('typing', { to: recipientEmail });
+      console.log('first');
 
       // Reset the typing timeout to prevent multiple emissions
       if (typingTimeoutRef.current) {
@@ -120,11 +122,21 @@ function Chat({ isLargeScreen }) {
       }
     });
 
+    socket?.on('typing', (data) => {
+      const { from } = data;
+      setIsTypingSenderUse(from);
+      setIsTyping(true);
+    });
+
     // Listen for stop typing events from the server
     socket?.on('stop typing', (data) => {
       if (data.from === selectedUser?.email) {
         setIsTyping(false);
       }
+    });
+
+    socket?.on('stop typing', (data) => {
+      setIsTyping(false);
     });
 
     return () => {
@@ -249,6 +261,7 @@ function Chat({ isLargeScreen }) {
     return unReadCountMsg.find((item) => item.senderEmail === email);
   };
 
+  console.log(' ', isTypingSenderUser);
   return (
     <div
       className={`${
@@ -289,32 +302,69 @@ function Chat({ isLargeScreen }) {
                   user.email !== adminUser.email &&
                   findUnreaderSenderMsg(adminUser?.email);
                 return (
+                  // <li
+                  //   key={adminUser.email}
+                  //   className={`relative p-4 mb-3 cursor-pointer rounded-lg flex items-center ${
+                  //     adminUser?.email === selectedUser?.email
+                  //       ? 'bg-gray-600 text-white'
+                  //       : 'bg-white text-gray-700'
+                  //   }`}
+                  //   onClick={() => handleUserClick(adminUser)}
+                  // >
+                  //   <img
+                  //     src={adminUser.profilePicture}
+                  //     alt={adminUser.name}
+                  //     className="inline-block w-8 h-8 rounded-full mr-2"
+                  //   />
+                  //   <div>
+                  //     {adminUser?.name === user?.name ? 'You' : adminUser?.name}
+                  //     {userCountMsg && (
+                  //       <span className="ml-14 bg-green-500 text-black text-xs font-bold px-2 py-1 rounded-full">
+                  //         {userCountMsg?.count || ' '}
+                  //       </span>
+                  //     )}
+                  //   </div>
+                  //   {activeUsers.includes(adminUser?.email) ? (
+                  //     <span className="absolute top-1 left-1 bg-green-500 w-3 h-3 rounded-full"></span>
+                  //   ) : (
+                  //     <span className="absolute top-1 left-1 bg-yellow-400 w-3 h-3 rounded-full"></span>
+                  //   )}
+                  // </li>
                   <li
                     key={adminUser.email}
-                    className={`relative p-4 mb-3 cursor-pointer rounded-lg flex items-center ${
+                    className={`relative p-4 mb-3 cursor-pointer rounded-lg flex items-center transition-all duration-300 ${
                       adminUser?.email === selectedUser?.email
-                        ? 'bg-gray-600 text-white'
-                        : 'bg-white text-gray-700'
+                        ? 'bg-gray-600 text-white shadow-lg'
+                        : 'bg-white text-gray-700 hover:bg-gray-100'
                     }`}
                     onClick={() => handleUserClick(adminUser)}
                   >
                     <img
                       src={adminUser.profilePicture}
                       alt={adminUser.name}
-                      className="inline-block w-8 h-8 rounded-full mr-2"
+                      className="inline-block w-10 h-10 rounded-full mr-4 border-2 border-gray-300"
                     />
-                    <div>
-                      {adminUser?.name === user?.name ? 'You' : adminUser?.name}
-                      {userCountMsg && (
-                        <span className="ml-14 bg-green-500 text-black text-xs font-bold px-2 py-1 rounded-full">
-                          {userCountMsg?.count || ' '}
+                    <div className="flex-grow">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold">
+                          {adminUser?.name === user?.name
+                            ? 'You'
+                            : adminUser?.name}
                         </span>
+                        {userCountMsg && (
+                          <span className="bg-green-500 text-black text-xs font-bold px-2 py-1 rounded-full ml-4">
+                            {userCountMsg?.count || ' '}
+                          </span>
+                        )}
+                      </div>
+                      {isTyping && adminUser?.email === isTypingSenderUser && (
+                        <div className="text-xs text-green-500">Typing...</div>
                       )}
                     </div>
                     {activeUsers.includes(adminUser?.email) ? (
-                      <span className="absolute top-1 left-1 bg-green-500 w-3 h-3 rounded-full"></span>
+                      <span className="absolute top-1 left-1 bg-green-500 w-3 h-3 rounded-full border-2 border-white"></span>
                     ) : (
-                      <span className="absolute top-1 left-1 bg-yellow-400 w-3 h-3 rounded-full"></span>
+                      <span className="absolute top-1 left-1 bg-yellow-400 w-3 h-3 rounded-full border-2 border-white"></span>
                     )}
                   </li>
                 );
@@ -352,7 +402,7 @@ function Chat({ isLargeScreen }) {
               ))}
               <div ref={messagesEndRef} />
             </div>
-            {isTyping && (
+            {isTyping && selectedUser.email === isTypingSenderUser && (
               <div className="typing-indicator">
                 {selectedUser?.name} is typing...
               </div>
