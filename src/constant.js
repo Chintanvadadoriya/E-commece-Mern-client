@@ -1,6 +1,6 @@
 
 
-export const BASE_URL='http://localhost:4000/api'
+export const BASE_URL=process.env.BASE_URL
 
 export const getAuthHeader = (token) => {
 
