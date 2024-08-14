@@ -375,3 +375,14 @@ export const downLoadSharingsFileApi=async(filename)=>{
     console.log("downLoadSharingsFileApi",err)
   }
 }
+
+export const allUnreadMessagesCountAdmin=async(token)=>{
+  
+  try{
+     const url = `${routerPath.getAllUnreadMessagesCount}`;
+     const response = await api.get(url,token);
+    return {data:response?.data?.unreadCounts}
+  }catch(err){
+    console.log("allUnreadMessagesCountAdmin",err)
+  }
+}

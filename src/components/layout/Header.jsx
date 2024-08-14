@@ -8,13 +8,17 @@ import useToast from '../../hook/useToaster';
 import NotificationDropdown from '../NotificationDropdown';
 import {
   fetchUserProfile,
+  getAllUnreadMessages,
   selectUserProfile,
+  unReadCountMessages,
 } from '../../redux/userProfileSlice';
 import { getAuthHeader } from '../../constant';
 
 const Header = ({ toggleSidebar, isOpen }) => {
   const dispatch = useDispatch();
   const data = useSelector(selectUserProfile);
+
+  let { unread_messages } = useSelector(unReadCountMessages);
   const { token, user } = useSelector(UserData);
 
   const showToast = useToast();
@@ -77,6 +81,7 @@ const Header = ({ toggleSidebar, isOpen }) => {
 
   useEffect(() => {
     dispatch(fetchUserProfile(getAuthHeader(token)));
+    dispatch(getAllUnreadMessages(getAuthHeader(token)));
   }, [token, user]);
 
   return (
@@ -116,9 +121,11 @@ const Header = ({ toggleSidebar, isOpen }) => {
               </svg>
 
               <span class="sr-only">Notifications</span>
-              <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
-                20
-              </div>
+              {unread_messages !== 0 && (
+                <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
+                  {unread_messages}
+                </div>
+              )}
             </button>
           </Link>
           <span ref={dropdownNotificationRef}>

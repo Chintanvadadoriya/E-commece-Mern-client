@@ -10,11 +10,15 @@ import {
   viewAllPrivateChat,
 } from '../../services/authService';
 import { UserData } from '../../redux/authSlice';
-import { useSelector } from 'react-redux';
-import { selectUserProfile } from '../../redux/userProfileSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getAllUnreadMessages,
+  selectUserProfile,
+} from '../../redux/userProfileSlice';
 import { getAuthHeader } from '../../constant';
 
 function Chat({ isLargeScreen }) {
+  const dispatch = useDispatch();
   const [adminData, setAdminData] = useState([]);
   const [input, setInput] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -82,6 +86,7 @@ function Chat({ isLargeScreen }) {
         payload,
         getAuthHeader(token)
       );
+      dispatch(getAllUnreadMessages(getAuthHeader(token)));
       setUnReadCountMsg(data);
     } catch (err) {
       console.log('err getAllUnreadMsgCount 1612199', err);
@@ -174,7 +179,6 @@ function Chat({ isLargeScreen }) {
           message: input,
         });
       }
-
       setInput('');
       handleStopTyping(selectedUser.email); // Stop typing after sending the message
     }
@@ -254,6 +258,7 @@ function Chat({ isLargeScreen }) {
   useEffect(() => {
     if (selectedUser) {
       updatAllUnreadMsgCount(selectedUser?.email);
+      dispatch(getAllUnreadMessages(getAuthHeader(token)));
     }
   }, [selectedUser, userChat]);
 
@@ -261,7 +266,6 @@ function Chat({ isLargeScreen }) {
     return unReadCountMsg.find((item) => item.senderEmail === email);
   };
 
-  console.log(' ', isTypingSenderUser);
   return (
     <div
       className={`${
