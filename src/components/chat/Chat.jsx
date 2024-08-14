@@ -351,7 +351,7 @@ function Chat({ isLargeScreen }) {
                     <div className="flex-grow">
                       <div className="flex items-center justify-between">
                         <span className="font-semibold">
-                          {adminUser?.name === user?.name
+                          {adminUser?.name === data?.name
                             ? 'You'
                             : adminUser?.name}
                         </span>

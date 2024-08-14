@@ -1,16 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AiOutlineBars } from 'react-icons/ai';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import ModelChangePassword from '../../common/ModelChangePassword';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchUserProfile,
+  getAllUnreadMessages,
+  selectUserProfile,
+  unReadCountMessages,
+} from '../../../redux/userProfileSlice';
+import { logout, UserData } from '../../../redux/authSlice';
 import useToast from '../../../hook/useToaster';
-import { logout } from '../../../redux/authSlice';
+import { Link, useNavigate } from 'react-router-dom';
+import { getAuthHeader } from '../../../constant';
 import NotificationDropdown from '../../NotificationDropdown';
+import ModelChangePassword from '../../common/ModelChangePassword';
 
 const AdminHeader = ({ toggleSidebar, isOpen }) => {
   const dispatch = useDispatch();
-  const showToast = useToast();
+  const data = useSelector(selectUserProfile);
 
+  let { unread_messages } = useSelector(unReadCountMessages);
+  const { token, user } = useSelector(UserData);
+
+  const showToast = useToast();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isDropdownOpenNotification, setDropdownOpenNotification] =
@@ -68,6 +79,11 @@ const AdminHeader = ({ toggleSidebar, isOpen }) => {
     navigate('/');
   };
 
+  useEffect(() => {
+    dispatch(fetchUserProfile(getAuthHeader(token)));
+    dispatch(getAllUnreadMessages(getAuthHeader(token)));
+  }, [token, user]);
+
   return (
     <header className="bg-blue-600 text-white p-4">
       <div className="flex justify-between items-center">
@@ -78,7 +94,7 @@ const AdminHeader = ({ toggleSidebar, isOpen }) => {
           />
         </div>
         <h1 className="text-2xl text-center flex-grow">
-          E-Commerce Admin Panel
+          E-Commerce Super-Admin Panel
         </h1>
         <div className="relative flex space-x-4">
           <Link to="/chat">
@@ -105,9 +121,11 @@ const AdminHeader = ({ toggleSidebar, isOpen }) => {
               </svg>
 
               <span class="sr-only">Notifications</span>
-              <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
-                20
-              </div>
+              {unread_messages !== 0 && (
+                <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
+                  {unread_messages}
+                </div>
+              )}
             </button>
           </Link>
           <span ref={dropdownNotificationRef}>
@@ -137,7 +155,7 @@ const AdminHeader = ({ toggleSidebar, isOpen }) => {
           <span ref={dropdownRef}>
             <img
               alt="no img"
-              src="https://t3.ftcdn.net/jpg/02/35/66/18/240_F_235661801_1OQkjM3o8zAtgnhdbPsRXKhs82a7XIkO.jpg" // Use a high-resolution image
+              src={data?.profilePicture} // Use a high-resolution image
               onClick={handleUserIconClick}
               className="w-[40px] h-[40px] text-gray-800 dark:text-white cursor-pointer rounded-full border-2 border-gray-300 shadow-lg transition-transform transform hover:scale-110 object-cover"
             />
