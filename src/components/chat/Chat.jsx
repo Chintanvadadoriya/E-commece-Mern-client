@@ -16,6 +16,8 @@ import {
   selectUserProfile,
 } from '../../redux/userProfileSlice';
 import { getAuthHeader } from '../../constant';
+import CreateGroupModel from '../common/CreateGroup';
+import AddMemberToGroup from '../common/AddMemberToGroup';
 
 function Chat({ isLargeScreen }) {
   const dispatch = useDispatch();
@@ -34,7 +36,23 @@ function Chat({ isLargeScreen }) {
   const [isTyping, setIsTyping] = useState(false); // New state for typing indicator
   const typingTimeoutRef = useRef(null); // Reference for typing timeout
   const [isTypingSenderUser, setIsTypingSenderUse] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpenAddMember, setModalOpenAddMember] = useState(false);
 
+  const openModal = (type) => {
+    if (type === 'create_group') {
+      setModalOpen(true);
+    } else {
+      setModalOpenAddMember(true);
+    }
+  };
+  const closeModal = () => {
+    setModalOpen(false);
+    setModalOpenAddMember(false);
+  };
+  const closeModalAddMember = () => {
+    setModalOpenAddMember(false);
+  };
   async function showAllAdminList() {
     try {
       let { data } = await allAdminListApi();
@@ -272,10 +290,27 @@ function Chat({ isLargeScreen }) {
         isLargeScreen ? 'custom-container' : ''
       } container mx-auto p-6 h-full w-full`}
     >
-      <div className="text-2xl font-semibold mb-6 flex justify-center mb-10">
+      <div className="flex  items-baseline justify-end space-y-6 gap-2">
+        <button
+          onClick={() => openModal('add_member')}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+        >
+          Add Member To Group
+        </button>
+        <button
+          onClick={() => openModal('create_group')}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+        >
+          Create Group
+        </button>
+      </div>
+
+      <div className="text-2xl font-semibold text-gray-800 flex justify-center mb-1">
         <span>
           {`Chat with `}
-          {selectedUser?.name || `Admin`}
+          <span className="text-indigo-600">
+            {selectedUser?.name || `Admin`}
+          </span>
         </span>
       </div>
 
@@ -306,34 +341,6 @@ function Chat({ isLargeScreen }) {
                   user.email !== adminUser.email &&
                   findUnreaderSenderMsg(adminUser?.email);
                 return (
-                  // <li
-                  //   key={adminUser.email}
-                  //   className={`relative p-4 mb-3 cursor-pointer rounded-lg flex items-center ${
-                  //     adminUser?.email === selectedUser?.email
-                  //       ? 'bg-gray-600 text-white'
-                  //       : 'bg-white text-gray-700'
-                  //   }`}
-                  //   onClick={() => handleUserClick(adminUser)}
-                  // >
-                  //   <img
-                  //     src={adminUser.profilePicture}
-                  //     alt={adminUser.name}
-                  //     className="inline-block w-8 h-8 rounded-full mr-2"
-                  //   />
-                  //   <div>
-                  //     {adminUser?.name === user?.name ? 'You' : adminUser?.name}
-                  //     {userCountMsg && (
-                  //       <span className="ml-14 bg-green-500 text-black text-xs font-bold px-2 py-1 rounded-full">
-                  //         {userCountMsg?.count || ' '}
-                  //       </span>
-                  //     )}
-                  //   </div>
-                  //   {activeUsers.includes(adminUser?.email) ? (
-                  //     <span className="absolute top-1 left-1 bg-green-500 w-3 h-3 rounded-full"></span>
-                  //   ) : (
-                  //     <span className="absolute top-1 left-1 bg-yellow-400 w-3 h-3 rounded-full"></span>
-                  //   )}
-                  // </li>
                   <li
                     key={adminUser.email}
                     className={`relative p-4 mb-3 cursor-pointer rounded-lg flex items-center transition-all duration-300 ${
@@ -477,6 +484,12 @@ function Chat({ isLargeScreen }) {
           </div>
         )}
       </div>
+      <CreateGroupModel isOpen={isModalOpen} close={closeModal} />
+      <AddMemberToGroup
+        isOpen={isModalOpenAddMember}
+        close={closeModalAddMember}
+        adminData={adminData}
+      />
     </div>
   );
 }
