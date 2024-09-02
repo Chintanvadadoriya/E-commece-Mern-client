@@ -392,10 +392,35 @@ export const allAdminMemberListApi = async () => {
     const url = `${routerPath.allAdminList}?isGroup=true`;
 
     const response = await api.get(url);
-    console.log('response', response)
     return {data:response?.data?.data, status: response?.status};
   } catch (error) {
     console.error('allAdminListApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const createGroup = async (payload,token) => {
+  try {
+    const url = `${routerPath.createGroup}`;
+
+    const response = await api.post(url,payload,token);
+    console.log('response createGroup', response)
+    return {data:response?.data?.group,msg:response?.data?.msg, status: response?.status};
+  } catch (error) {
+    console.error('createGroup 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const updateMemberOnGroup = async (payload) => {
+  try {
+    const url = `${routerPath.updateMemberOnGroup}`;
+
+    const response = await api.put(url,payload);
+    console.log('response', response)
+    return {data:response?.data?.updatedGroup,msg:response?.data?.msg, status: response?.status};
+  } catch (error) {
+    console.error('updateMemberOnGroup 1612199', error)
     throw new Error(error?.response?.data?.msg);
   }
 };

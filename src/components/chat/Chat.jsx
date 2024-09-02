@@ -333,7 +333,7 @@ function Chat({ isLargeScreen }) {
         >
           <h2 className="text-xl font-medium mb-4 flex justify-between items-center">
             Users {adminData?.length}
-            {adminData.length > 7 && (
+            {adminData.length >= 6 && (
               <button
                 onClick={() => setIsUserListExpanded(!isUserListExpanded)}
                 className="text-sm text-blue-500"
@@ -347,7 +347,7 @@ function Chat({ isLargeScreen }) {
               isUserListExpanded ? '[height:500px]' : 'h-100'
             }`}
           >
-            {(isUserListExpanded ? adminData : adminData.slice(0, 7)).map(
+            {(isUserListExpanded ? adminData : adminData.slice(0, 6)).map(
               (adminUser) => {
                 const userCountMsg =
                   user.email !== adminUser.email &&
@@ -496,7 +496,11 @@ function Chat({ isLargeScreen }) {
           </div>
         )}
       </div>
-      <CreateGroupModel isOpen={isModalOpen} close={closeModal} />
+      <CreateGroupModel
+        isOpen={isModalOpen}
+        close={closeModal}
+        showAllAdminList={showAllAdminList}
+      />
       <AddMemberToGroup
         isOpen={isModalOpenAddMember}
         close={closeModalAddMember}

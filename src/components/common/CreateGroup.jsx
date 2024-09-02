@@ -7,16 +7,17 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useSelector } from 'react-redux';
 import { UserData } from '../../redux/authSlice';
 import { getAuthHeader } from '../../constant';
-import { passwordChangeUserApi } from '../../services/authService';
+import { createGroup, passwordChangeUserApi } from '../../services/authService';
 import useToast from '../../hook/useToaster';
 import { Loader } from 'rsuite';
 import * as yup from 'yup';
 
 const createGroupSchema = yup.object().shape({
   GroupName: yup.string().required('GroupName is required'),
+  profilePicture: yup.string().required('profile Picture is required'),
 });
 
-function CreateGroupModel({ isOpen, close }) {
+function CreateGroupModel({ isOpen, close, showAllAdminList }) {
   const { token } = useSelector(UserData);
   const showToast = useToast();
   const {
@@ -42,22 +43,26 @@ function CreateGroupModel({ isOpen, close }) {
 
   const onSubmit = async (payload) => {
     console.log('payload', payload);
+
+    let GroupObj = {
+      name: payload.GroupName,
+      profilePicture: payload.profilePicture,
+    };
+
     setLoading(true);
     try {
-      //   let { data, msg } = await passwordChangeUserApi(
-      //     payload,
-      //     getAuthHeader(token)
-      //   );
-      //   if (data === 200) {
-      //     showToast('success', `${msg}`);
-      //     close();
-      //     setLoading(false);
-      //   } else {
-      //     showToast('error', `${msg}`);
-      //     setLoading(false);
-      //   }
+      let { msg, status } = await createGroup(GroupObj, getAuthHeader(token));
+      if (status === 201) {
+        showAllAdminList()
+        showToast('success', `${msg}`);
+        close();
+        setLoading(false);
+      } else {
+        showToast('error', `${msg}`);
+        setLoading(false);
+      }
     } catch (error) {
-      console.error('Failed to change password', error);
+      console.error('Failed to create group', error);
       showToast('error', `${error.message}`);
     } finally {
       setLoading(false);
@@ -86,6 +91,21 @@ function CreateGroupModel({ isOpen, close }) {
                 onChange={field.onChange}
                 label="Group Name"
                 error={errors.GroupName}
+              />
+            )}
+          />
+
+          <Controller
+            name="profilePicture"
+            control={control}
+            render={({ field }) => (
+              <CustomInput
+                id="profilePicture"
+                name="profilePicture"
+                value={field.value}
+                onChange={field.onChange}
+                label="profile Picturee"
+                error={errors.profilePicture}
               />
             )}
           />

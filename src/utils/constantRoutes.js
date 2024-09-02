@@ -43,6 +43,8 @@ export const routerPath = {
 
     getAllUnreadMessagesCount:'/chat/total-unread-messages-count-admin',
 
+    createGroup:'/chat/create-group',
+    updateMemberOnGroup:'/chat/addMemberTo-group',
 
 
 
