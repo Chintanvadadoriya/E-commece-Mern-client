@@ -4,6 +4,7 @@ import Picker from 'emoji-picker-react';
 import { useSocket } from '../../Context/SocketContext';
 import {
   allAdminListApi,
+  allAdminMemberListApi,
   getAllUnreadedMsgCountListApi,
   shareFileHandlingApi,
   updateUnreadedMsgCountApi,
@@ -22,6 +23,8 @@ import AddMemberToGroup from '../common/AddMemberToGroup';
 function Chat({ isLargeScreen }) {
   const dispatch = useDispatch();
   const [adminData, setAdminData] = useState([]);
+  const [groupMember, setGroupMember] = useState([]);
+
   const [input, setInput] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedUser, setSelectedUser] = useState();
@@ -124,8 +127,17 @@ function Chat({ isLargeScreen }) {
     }
   }
 
+  async function showAllAdminMemberList() {
+    try {
+      let { data } = await allAdminMemberListApi();
+      setGroupMember(data);
+    } catch (err) {
+      console.log('err showAll admin 1612199', err);
+    }
+  }
   useEffect(() => {
     showAllAdminList();
+    showAllAdminMemberList()
   }, []);
 
   useEffect(() => {
@@ -488,7 +500,7 @@ function Chat({ isLargeScreen }) {
       <AddMemberToGroup
         isOpen={isModalOpenAddMember}
         close={closeModalAddMember}
-        adminData={adminData}
+        adminData={groupMember}
       />
     </div>
   );

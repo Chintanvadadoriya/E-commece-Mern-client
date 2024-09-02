@@ -386,3 +386,16 @@ export const allUnreadMessagesCountAdmin=async(token)=>{
     console.log("allUnreadMessagesCountAdmin",err)
   }
 }
+
+export const allAdminMemberListApi = async () => {
+  try {
+    const url = `${routerPath.allAdminList}?isGroup=true`;
+
+    const response = await api.get(url);
+    console.log('response', response)
+    return {data:response?.data?.data, status: response?.status};
+  } catch (error) {
+    console.error('allAdminListApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
