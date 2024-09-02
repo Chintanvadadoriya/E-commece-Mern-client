@@ -500,11 +500,12 @@ function Chat({ isLargeScreen }) {
         isOpen={isModalOpen}
         close={closeModal}
         showAllAdminList={showAllAdminList}
-      />
+        />
       <AddMemberToGroup
         isOpen={isModalOpenAddMember}
         close={closeModalAddMember}
         adminData={groupMember}
+        socket={socket}
       />
     </div>
   );

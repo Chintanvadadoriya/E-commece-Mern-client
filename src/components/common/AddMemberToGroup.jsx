@@ -7,7 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useSelector } from 'react-redux';
 import { UserData } from '../../redux/authSlice';
 import { getAuthHeader } from '../../constant';
-import { passwordChangeUserApi } from '../../services/authService';
+import { passwordChangeUserApi, updateMemberOnGroup } from '../../services/authService';
 import useToast from '../../hook/useToaster';
 import { Loader } from 'rsuite';
 import * as yup from 'yup';
@@ -24,7 +24,7 @@ const formatAdminData = (adminData) => {
   }));
 };
 
-function AddMemberToGroup({ isOpen, close, adminData }) {
+function AddMemberToGroup({ isOpen, close, adminData,socket }) {
   const { token } = useSelector(UserData);
   const showToast = useToast();
   const {
@@ -49,26 +49,48 @@ function AddMemberToGroup({ isOpen, close, adminData }) {
     }
   }, [isOpen, reset]);
 
+  useEffect(()=>{
+    if (socket) {
+      socket.on('join group failed', ({ message }) => {
+        showToast('error', message); // Show error toast
+      });
+
+      socket.on('group joined', ({ groupName, members }) => {
+        const indexNo = members.length - 1;
+        console.log(`Joined group ${groupName}. Current members:`, members);
+        showToast(
+          'success',
+          `${members[indexNo]?.email} added ${groupName} group `
+        );
+      });
+
+      // Cleanup on unmount
+      return () => {
+        socket.off('join group failed');
+        socket.off('group joined');
+      };
+    }
+  },[socket])
+
   if (!isOpen) return null;
 
+  const handleJoinGroup = (groupName, email, remove = false) => {
+    if (socket && groupName && email) {
+      socket.emit('join group', { groupName, email, remove });
+    }
+  };
+
+
   const onSubmit = async (payload) => {
-    console.log('payload', payload);
+    
+    const { GroupName, addMember } = payload;
+
     setLoading(true);
     try {
-      //   let { data, msg } = await passwordChangeUserApi(
-      //     payload,
-      //     getAuthHeader(token)
-      //   );
-      //   if (data === 200) {
-      //     showToast('success', `${msg}`);
-      //     close();
-      //     setLoading(false);
-      //   } else {
-      //     showToast('error', `${msg}`);
-      //     setLoading(false);
-      //   }
+      handleJoinGroup(GroupName, addMember.label);
+
     } catch (error) {
-      console.error('Failed to change password', error);
+      console.error('Failed to updateMemberOnGroup', error);
       showToast('error', `${error.message}`);
     } finally {
       setLoading(false);

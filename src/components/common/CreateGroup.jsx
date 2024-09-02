@@ -41,6 +41,8 @@ function CreateGroupModel({ isOpen, close, showAllAdminList }) {
 
   if (!isOpen) return null;
 
+
+
   const onSubmit = async (payload) => {
     console.log('payload', payload);
 
@@ -53,7 +55,7 @@ function CreateGroupModel({ isOpen, close, showAllAdminList }) {
     try {
       let { msg, status } = await createGroup(GroupObj, getAuthHeader(token));
       if (status === 201) {
-        showAllAdminList()
+        showAllAdminList();
         showToast('success', `${msg}`);
         close();
         setLoading(false);

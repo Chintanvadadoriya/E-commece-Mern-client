@@ -404,7 +404,6 @@ export const createGroup = async (payload,token) => {
     const url = `${routerPath.createGroup}`;
 
     const response = await api.post(url,payload,token);
-    console.log('response createGroup', response)
     return {data:response?.data?.group,msg:response?.data?.msg, status: response?.status};
   } catch (error) {
     console.error('createGroup 1612199', error)
@@ -412,12 +411,11 @@ export const createGroup = async (payload,token) => {
   }
 };
 
-export const updateMemberOnGroup = async (payload) => {
+export const updateMemberOnGroup = async (payload,token) => {
   try {
     const url = `${routerPath.updateMemberOnGroup}`;
 
-    const response = await api.put(url,payload);
-    console.log('response', response)
+    const response = await api.put(url,payload,token);
     return {data:response?.data?.updatedGroup,msg:response?.data?.msg, status: response?.status};
   } catch (error) {
     console.error('updateMemberOnGroup 1612199', error)
