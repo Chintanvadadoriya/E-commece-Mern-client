@@ -22,7 +22,7 @@ export const SocketProvider = ({ children }) => {
       setConnected(true);
 
       if (user && user.email) {
-        newSocket.emit('login', user.email);
+        newSocket.emit('login', user.email,user);
       }
     });
 

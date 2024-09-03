@@ -140,15 +140,52 @@ function Chat({ isLargeScreen }) {
     showAllAdminMemberList()
   }, []);
 
+
   useEffect(() => {
-    socket?.on('private message', (data) => {
+    if (!selectedUser?.email) {
+      let groupName=selectedUser?.name
+     socket?.emit('join group', { groupName, email: user.email });
+     console.log(`Joined group: ${groupName} with email: ${user.email}`);
+    }
+     return () => {
+       socket?.off('group joined');
+     };
+  }, [selectedUser,socket,user]);
+
+  useEffect(() => {
+   
+    // console.log('effect call', selectedUser,!selectedUser?.email);
+    // Function to handle group messages
+    const handleGroupMessage = async(msg) => {
+
+      console.log('Group message received:', msg);
+      console.log('selectedUser', selectedUser)
+       if (user.email !== msg.from) {
+        if (selectedUser?.name === msg.groupName) {
+          setUserChat((prevMessages) => [...prevMessages, msg]);
+        }
+      }
+    };
+
+    // Function to handle private messages
+    const handlePrivateMessage = (data) => {
+      console.log('Private message received:', data);
       if (user.email !== data.from) {
-        if (selectedUser?.email === data?.from) {
+        if (selectedUser?.email === data.from) {
           setUserChat((prevMessages) => [...prevMessages, data]);
         }
         getAllUnreadMsgCount();
       }
-    });
+    };
+
+
+     if (!selectedUser?.email) {
+       // Listening for group messages when no user is selected (assumed group chat)
+       socket?.on('group message', handleGroupMessage);
+     } else {
+       // Listening for private messages when a user is selected
+       socket?.on('private message', handlePrivateMessage);
+     }
 
     // Listen for typing events from the server
     socket?.on('typing', (data) => {
@@ -178,6 +215,7 @@ function Chat({ isLargeScreen }) {
       socket?.off('private message');
       socket?.off('typing');
       socket?.off('stop typing');
+      socket?.off('group message');
     };
   }, [socket, user, selectedUser]);
 
@@ -188,7 +226,8 @@ function Chat({ isLargeScreen }) {
     });
   }, [selectedUser]);
 
-  const handleSend = () => {
+  console.log('selectedUser', selectedUser)
+  const handleSend = async() => {
     if (input.trim()) {
       const newMessage = {
         message: input,
@@ -196,19 +235,36 @@ function Chat({ isLargeScreen }) {
         profilePhoto: data.profilePicture,
         time: new Date(),
         name: 'You',
-        userId: selectedUser.id,
-        senderEmail: user.email,
-        recipientEmail: selectedUser.email,
+        userId: selectedUser?.id,
+        senderEmail: user?.email,
+        recipientEmail: selectedUser?.email,
       };
 
       setUserChat((prevMessages) => [...prevMessages, newMessage]);
 
+      // if (socket) {
+      //   socket.emit('private message', {
+      //     to: selectedUser.email,
+      //     message: input,
+      //   });
+      // }
       if (socket) {
-        socket.emit('private message', {
-          to: selectedUser.email,
-          message: input,
-        });
-      }
+        if (!selectedUser?.email) {
+          console.log("call thay chhe group ")
+           // Emit a group message event
+           socket.emit('group message', {
+             groupName: selectedUser?.name, // Name of the group
+             message: input,
+           });
+         } else {
+          console.log("call thay chhe private messages")
+           // Emit a private message event
+           socket.emit('private message', {
+             to: selectedUser.email,
+             message: input,
+           });
+         }
+       }
       setInput('');
       handleStopTyping(selectedUser.email); // Stop typing after sending the message
     }
@@ -243,14 +299,33 @@ function Chat({ isLargeScreen }) {
           fileType: file?.type,
         };
 
-        socket.emit('private message', {
-          to: selectedUser.email,
-          message: newMessage.message,
-          fileUrl: data,
-          fileName: file.name,
-          fileType: file?.type,
-        });
-
+        // socket.emit('private message', {
+        //   to: selectedUser.email,
+        //   message: newMessage.message,
+        //   fileUrl: data,
+        //   fileName: file.name,
+        //   fileType: file?.type,
+        // });
+        
+        if (!selectedUser?.email) {
+          // Emit a group message event
+          socket.emit('group message', {
+            groupName: selectedUser?.name, // Name of the group
+            message: newMessage.message,
+            fileUrl: '', // Add file URL if needed
+            fileType: '', // Add file type if needed
+          });
+        } else {
+          // Emit a private message event
+          socket.emit('private message', {
+              to: selectedUser.email,
+              message: newMessage.message,
+              fileUrl: data,
+              fileName: file.name,
+              fileType: file?.type,
+          });
+        }
+        
         setUserChat([...userChat, newMessage]);
         e.target.value = null;
       } catch (error) {
@@ -295,7 +370,7 @@ function Chat({ isLargeScreen }) {
   const findUnreaderSenderMsg = (email) => {
     return unReadCountMsg.find((item) => item.senderEmail === email);
   };
-
+console.log('userChat', userChat)
   return (
     <div
       className={`${
@@ -417,7 +492,11 @@ function Chat({ isLargeScreen }) {
                   }
                   time={msg.timestamp}
                   name={
-                    user.email === msg.senderEmail ? 'You' : selectedUser?.name
+                    selectedUser?.email
+                      ? user.email === msg.senderEmail
+                        ? 'You'
+                        : selectedUser?.name
+                      : msg?.userName
                   }
                   file={msg.fileUrl}
                   fileType={msg.fileType}
@@ -500,7 +579,7 @@ function Chat({ isLargeScreen }) {
         isOpen={isModalOpen}
         close={closeModal}
         showAllAdminList={showAllAdminList}
-        />
+      />
       <AddMemberToGroup
         isOpen={isModalOpenAddMember}
         close={closeModalAddMember}
