@@ -36,7 +36,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       newSocket.disconnect();
     };
-  }, [user]);
+  }, [profile, user]);
 
     useEffect(() => {
     // Listen for active users updates
