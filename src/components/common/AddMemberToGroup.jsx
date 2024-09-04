@@ -49,36 +49,37 @@ function AddMemberToGroup({ isOpen, close, adminData,socket }) {
     }
   }, [isOpen, reset]);
 
-  useEffect(()=>{
-    if (socket) {
-      socket.on('join group failed', ({ message }) => {
-        showToast('error', message); // Show error toast
-      });
+  // useEffect(()=>{
+  //   if (socket) {
+  //     socket.on('join group failed', ({ message }) => {
+  //       showToast('error', message); // Show error toast
+  //     });
 
-      socket.on('group joined', ({ groupName, members }) => {
-        const indexNo = members.length - 1;
-        console.log(`Joined group ${groupName}. Current members:`, members);
-        showToast(
-          'success',
-          `${members[indexNo]?.email} added ${groupName} group `
-        );
-      });
+  //     socket.on('group joined', ({ groupName, members }) => {
+  //       const indexNo = members.length - 1;
+  //       console.log(`Joined group ${groupName}. Current members:`, members);
+  //       showToast(
+  //         'success',
+  //         `${members[indexNo]?.email} added ${groupName} group `
+  //       );
+  //     });
 
-      // Cleanup on unmount
-      return () => {
-        socket.off('join group failed');
-        socket.off('group joined');
-      };
-    }
-  },[socket])
+  //     // Cleanup on unmount
+  //     return () => {
+  //       socket.off('join group failed');
+  //       socket.off('group joined');
+  //     };
+  //   }
+  // },[socket])
 
   if (!isOpen) return null;
 
-  const handleJoinGroup = (groupName, email, remove = false) => {
-    if (socket && groupName && email) {
-      socket.emit('join group', { groupName, email, remove });
-    }
-  };
+  // const handleJoinGroup = async(groupName, email, remove = false) => {
+  //   if (socket && groupName && email) {
+  //     socket.emit('join group', { groupName, email, remove });
+  //   }
+
+  // };
 
 
   const onSubmit = async (payload) => {
@@ -87,7 +88,31 @@ function AddMemberToGroup({ isOpen, close, adminData,socket }) {
 
     setLoading(true);
     try {
-      handleJoinGroup(GroupName, addMember.label);
+          let GroupObj = {
+            name: GroupName,
+            memberEmail: addMember.label,
+            memberSocketId: '',
+            remove:false
+          };
+
+          try {
+            let { msg, status } = await updateMemberOnGroup(
+              GroupObj,
+              getAuthHeader(token)
+            );
+            if (status === 201) {
+              showToast('success', `${msg}`);
+              setLoading(false);
+            } else {
+              showToast('error', `${msg}`);
+              setLoading(false);
+            }
+          } catch (error) {
+            console.error('Failed to create group', error);
+            showToast('error', `${error.message}`);
+          } finally {
+            setLoading(false);
+          }
 
     } catch (error) {
       console.error('Failed to updateMemberOnGroup', error);
