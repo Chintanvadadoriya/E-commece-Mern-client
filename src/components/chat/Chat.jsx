@@ -42,7 +42,6 @@ function Chat({ isLargeScreen }) {
   const [isTypingSenderUser, setIsTypingSenderUse] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenAddMember, setModalOpenAddMember] = useState(false);
-
   const openModal = (type) => {
     if (type === 'create_group') {
       setModalOpen(true);
@@ -397,20 +396,22 @@ console.log('userChat', userChat)
         isLargeScreen ? 'custom-container' : ''
       } container mx-auto p-6 h-full w-full`}
     >
-      <div className="flex  items-baseline justify-end space-y-6 gap-2">
-        <button
-          onClick={() => openModal('add_member')}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
-        >
-          Add Member To Group
-        </button>
-        <button
-          onClick={() => openModal('create_group')}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
-        >
-          Create Group
-        </button>
-      </div>
+      {user?.userType === 'superAdmin' && (
+        <div className="flex  items-baseline justify-end space-y-6 gap-2">
+          <button
+            onClick={() => openModal('add_member')}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+          >
+            Add Member To Group
+          </button>
+          <button
+            onClick={() => openModal('create_group')}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+          >
+            Create Group
+          </button>
+        </div>
+      )}
 
       <div className="text-2xl font-semibold text-gray-800 flex justify-center mb-1">
         <span>
