@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useSelector } from 'react-redux';
 import { UserData } from '../redux/authSlice';
+import { selectUserProfile } from '../redux/userProfileSlice';
 
 const SocketContext = createContext();
 
@@ -14,6 +15,7 @@ export const SocketProvider = ({ children }) => {
 
 
   const { user } = useSelector(UserData);
+  const profile = useSelector(selectUserProfile);
   useEffect(() => {
     const newSocket = io(process.env.REACT_APP_SOCKET_URL);
     setSocket(newSocket);
@@ -22,7 +24,7 @@ export const SocketProvider = ({ children }) => {
       setConnected(true);
 
       if (user && user.email) {
-        newSocket.emit('login', user.email,user);
+        newSocket.emit('login', user.email,profile);
       }
     });
 

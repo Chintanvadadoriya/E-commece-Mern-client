@@ -371,6 +371,7 @@ function Chat({ isLargeScreen }) {
     return unReadCountMsg.find((item) => item.senderEmail === email);
   };
 console.log('userChat', userChat)
+console.log('selectedUser', selectedUser)
   return (
     <div
       className={`${
@@ -486,9 +487,13 @@ console.log('userChat', userChat)
                   message={msg.message}
                   isSent={user.email === msg.senderEmail}
                   profilePhoto={
-                    user.email === msg.senderEmail
-                      ? data.profilePicture
-                      : selectedUser.profilePicture
+                    selectedUser?.email
+                      ? user.email === msg.senderEmail
+                        ? data.profilePicture
+                        : selectedUser.profilePicture
+                      : user.email === msg.senderEmail
+                        ? data.profilePicture
+                        : msg?.profilePicture
                   }
                   time={msg.timestamp}
                   name={
