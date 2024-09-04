@@ -371,7 +371,7 @@ function Chat({ isLargeScreen }) {
     return unReadCountMsg.find((item) => item.senderEmail === email);
   };
 console.log('userChat', userChat)
-console.log('selectedUser', selectedUser)
+
   return (
     <div
       className={`${
