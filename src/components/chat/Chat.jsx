@@ -5,6 +5,7 @@ import { useSocket } from '../../Context/SocketContext';
 import {
   allAdminListApi,
   allAdminMemberListApi,
+  getAllGroupMessages,
   getAllUnreadedMsgCountListApi,
   shareFileHandlingApi,
   updateUnreadedMsgCountApi,
@@ -70,8 +71,17 @@ function Chat({ isLargeScreen }) {
       let { data } = await viewAllPrivateChat(payload, getAuthHeader(token));
       setUserChat(data);
     } catch (err) {
-      console.log('err showAll admin 1612199', err);
+      console.log('showAllPrivateMsg', err);
     }
+  }
+
+  async function showAllGroupMessages(payload){
+      try {
+        let { data} = await getAllGroupMessages(payload,getAuthHeader(token));
+        setUserChat(data);
+      } catch (err) {
+        console.log('showAllGroupMessages', err);
+      }
   }
 
   // Emit typing event when the user starts typing
@@ -132,7 +142,7 @@ function Chat({ isLargeScreen }) {
       let { data } = await allAdminMemberListApi();
       setGroupMember(data);
     } catch (err) {
-      console.log('err showAll admin 1612199', err);
+      console.log('showAllAdminMemberList', err);
     }
   }
   useEffect(() => {
@@ -220,10 +230,18 @@ function Chat({ isLargeScreen }) {
   }, [socket, user, selectedUser]);
 
   useEffect(() => {
-    showAllPrivateMsg({
-      senderEmail: user?.email,
-      recipientEmail: selectedUser?.email,
-    });
+
+    if (selectedUser?.email){
+      showAllPrivateMsg({
+        senderEmail: user?.email,
+        recipientEmail: selectedUser?.email,
+      })
+    }else{
+        showAllGroupMessages({
+          senderEmail: user?.email,
+          groupName: selectedUser?.name,
+        });
+    }
   }, [selectedUser]);
 
   console.log('selectedUser', selectedUser)
@@ -312,8 +330,9 @@ function Chat({ isLargeScreen }) {
           socket.emit('group message', {
             groupName: selectedUser?.name, // Name of the group
             message: newMessage.message,
-            fileUrl: '', // Add file URL if needed
-            fileType: '', // Add file type if needed
+            fileUrl: data,
+            fileName: file.name,
+            fileType: file?.type,
           });
         } else {
           // Emit a private message event

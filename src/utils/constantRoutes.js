@@ -45,6 +45,8 @@ export const routerPath = {
 
     createGroup:'/chat/create-group',
     updateMemberOnGroup:'/chat/addMemberTo-group',
+    getAllGroupMessages:'/chat/all-group-messages',
+
 
 
 
