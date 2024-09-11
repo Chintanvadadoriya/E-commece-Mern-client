@@ -47,6 +47,9 @@ export const routerPath = {
     updateMemberOnGroup:'/chat/addMemberTo-group',
     getAllGroupMessages:'/chat/all-group-messages',
 
+    createPaymentIntent:'/payment/create-payment-intent',
+
+
 
 
 

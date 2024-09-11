@@ -435,3 +435,17 @@ export const getAllGroupMessages = async (payload,token) => {
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+export const paymentIntentServiceApi = async (payload) => {
+
+  try {
+    const url = `${routerPath.createPaymentIntent}`;
+
+    const response = await api.post(url,payload);
+    console.log('paymentIntentServiceApi response', response)
+    return response
+  } catch (error) {
+    console.error('paymentIntentServiceApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
