@@ -48,6 +48,10 @@ export const routerPath = {
     getAllGroupMessages:'/chat/all-group-messages',
 
     createPaymentIntent:'/payment/create-payment-intent',
+    savePaymentMethod:'/payment/store-payment-method',
+    saveCardPaymentMethod:'/payment/pay-with-saved-card',
+
+
 
 
 

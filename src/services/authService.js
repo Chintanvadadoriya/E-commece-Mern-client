@@ -449,3 +449,32 @@ export const paymentIntentServiceApi = async (payload) => {
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+
+export const savePaymentMethodServiceApi = async (payload) => {
+
+  try {
+    const url = `${routerPath.savePaymentMethod}`;
+
+    const response = await api.post(url,payload);
+    console.log('savePaymentMethodServiceApi response', response)
+    return response
+  } catch (error) {
+    console.error('savePaymentMethodServiceApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const saveCardPaymentMethodServiceApi = async (payload) => {
+
+  try {
+    const url = `${routerPath.saveCardPaymentMethod}`;
+
+    const response = await api.post(url,payload);
+    console.log('saveCardPaymentMethodServiceApi response', response)
+    return {response,msg:response.status}
+  } catch (error) {
+    console.error('saveCardPaymentMethodServiceApi 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
