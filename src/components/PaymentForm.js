@@ -12,7 +12,7 @@ const PaymentForm = () => {
     const [processing, setProcessing] = useState(false);
     const [succeeded, setSucceeded] = useState(false);
     const [amount, setAmount] = useState(100); // Default amount to add funds
-    const [walletBalance, setWalletBalance] = useState(500); // Simulating wallet balance (e.g., ₹500)
+    const [walletBalance, setWalletBalance] = useState(0); // Simulating wallet balance (e.g., ₹500)
     const [showForm, setShowForm] = useState(false); // Toggle form visibility
     const [savedCards, setSavedCards] = useState([]); // Simulate saved cards
     const [selectedCard, setSelectedCard] = useState(''); // Selected saved card
@@ -28,6 +28,7 @@ const PaymentForm = () => {
    function fetchCardSavedData(){
      if(data){
             setSavedCards([...data?.paymentMethods]);
+            setWalletBalance(data?.walletBalance)
         }
         // Set email if available in user data
         if (user?.email) {
