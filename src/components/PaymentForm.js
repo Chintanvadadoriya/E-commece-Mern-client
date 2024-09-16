@@ -19,26 +19,35 @@ const PaymentForm = () => {
     const [email, setEmail] = useState(''); // Email field for the form
     const stripe = useStripe();
     const elements = useElements();
-    const { user,token } = useSelector(UserData);
+    const { user, token } = useSelector(UserData);
     const data = useSelector(selectUserProfile);
     const dispatch = useDispatch();
     const showToast = useToast();
 
+   async function updateProfileWallet() {
+        setTimeout(async () => {
+            await dispatch(fetchUserProfile(getAuthHeader(token)));
+        }, 2000); // 2 seconds delay
+    }
 
-   function fetchCardSavedData(){
-     if(data){
+    function fetchCardSavedData() {
+        if (data) {
             setSavedCards([...data?.paymentMethods]);
-            setWalletBalance(data?.walletBalance)
+            setWalletBalance(data?.walletBalance);
         }
         // Set email if available in user data
         if (user?.email) {
             setEmail(user.email);
         }
-   }
+    }
 
     useEffect(() => {
-       fetchCardSavedData()
-    }, [data]);
+        updateProfileWallet();
+    }, [ walletBalance]);
+
+    useEffect(() => {
+        fetchCardSavedData();
+    }, [data]); // This will run every time the data changes
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -54,16 +63,14 @@ const PaymentForm = () => {
                     paymentMethodId: selectedCard, // Use the selected card's paymentMethodId
                 };
 
-                const {response} = await saveCardPaymentMethodServiceApi(payload);
-                console.log('response', response);
+                const { response } = await saveCardPaymentMethodServiceApi(payload);
                 setProcessing(false);
 
                 if (response?.data?.paymentIntent?.status === 'succeeded') {
+                    await updateProfileWallet(); // Fetch updated profile after transaction success
                     showToast('success', 'Transaction is Succeeded!');
                     setSucceeded(true);
-                    setWalletBalance(walletBalance + amount); // Update wallet balance
-                    dispatch(fetchUserProfile(getAuthHeader(token))); // Update user profile if needed
-
+                    setWalletBalance(walletBalance + amount); // Update wallet balance locally
                 } else {
                     setError('Payment failed');
                 }
@@ -98,14 +105,11 @@ const PaymentForm = () => {
                 } else {
                     if (paymentIntent.status === 'succeeded') {
                         const payment_method_id = paymentIntent?.payment_method;
-
                         // Save the new card for future payments
                         await savePaymentMethodServiceApi({ email, paymentMethodId: payment_method_id });
-
                         setSucceeded(true);
-                        dispatch(fetchUserProfile(getAuthHeader(token))); // Update user profile if needed
-                        fetchCardSavedData(); // Refresh saved cards
-                        setWalletBalance(walletBalance + amount); // Update wallet balance
+                        await updateProfileWallet(); // Fetch updated profile after transaction success
+                       setWalletBalance(walletBalance + amount); // Update wallet balance locally
                     }
                     setProcessing(false);
                 }
@@ -116,12 +120,11 @@ const PaymentForm = () => {
         }
     };
 
-
     return (
         <div className="max-w-lg mx-auto my-10 p-6 bg-white shadow-lg rounded-lg">
             {/* Wallet Balance Section */}
             <div className="mb-6 text-center">
-                <h2 className="text-2xl font-bold mb-4">Your Wallet</h2>
+                <h2 className="text-2xl font-bold mb-4">My Wallet</h2>
                 <div className="text-lg text-green-600 mb-4">
                     <strong>Wallet Balance: ₹{walletBalance}</strong>
                 </div>
@@ -204,7 +207,7 @@ const PaymentForm = () => {
 
                         <button
                             type="submit"
-                            disabled={!stripe || processing || succeeded}
+                            disabled={!stripe || processing}
                             className={`w-full py-2 px-4 rounded-lg text-white ${
                                 processing ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-700'
                             }`}
@@ -214,7 +217,7 @@ const PaymentForm = () => {
 
                         {/* Error and success messages */}
                         {error && <div className="mt-4 text-red-500">{error}</div>}
-                        {succeeded && <div className="mt-4 text-green-500">Payment succeeded! Your new wallet balance is ₹{walletBalance + amount}.</div>}
+                        {succeeded && <div className="mt-4 text-green-500">Payment succeeded! Your new wallet balance is ₹{walletBalance}.</div>}
                     </form>
                 </div>
             )}

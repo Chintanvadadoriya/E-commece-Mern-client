@@ -72,6 +72,10 @@ const Header = ({ toggleSidebar, isOpen }) => {
     navigate('/user-profile');
   };
 
+  const ShowWalletBalance = () => {
+    navigate('/payment');
+  };
+
   const LogoutUser = (e) => {
     e.preventDefault();
     dispatch(logout());
@@ -173,6 +177,12 @@ const Header = ({ toggleSidebar, isOpen }) => {
                   className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer"
                 >
                   Change Password
+                </span>
+                <span
+                  onClick={ShowWalletBalance}
+                  className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer"
+                >
+                  My Wallet
                 </span>
                 <span
                   className="block px-4 py-2 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer"
