@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
-import { paymentIntentServiceApi, saveCardPaymentMethodServiceApi, savePaymentMethodServiceApi } from '../services/authService';
+import { paymentIntentServiceApi, saveCardPaymentMethodServiceApi, savePaymentMethodServiceApi } from '../../services/authService';
 import { useDispatch, useSelector } from 'react-redux';
-import { UserData } from '../redux/authSlice';
-import { fetchUserProfile, selectUserProfile } from '../redux/userProfileSlice';
-import { getAuthHeader } from '../constant';
-import useToast from '../hook/useToaster';
+import { UserData } from '../../redux/authSlice';
+import { fetchUserProfile, selectUserProfile } from '../../redux/userProfileSlice';
+import { getAuthHeader } from '../../constant';
+import useToast from '../../hook/useToaster';
 
 const PaymentForm = () => {
     const [error, setError] = useState(null);
@@ -123,21 +123,15 @@ const PaymentForm = () => {
     return (
         <div className="max-w-lg mx-auto my-10 p-6 bg-white shadow-lg rounded-lg">
             {/* Wallet Balance Section */}
-            <div className="mb-6 text-center">
+            <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold mb-4">My Wallet</h2>
                 <div className="text-lg text-green-600 mb-4">
                     <strong>Wallet Balance: ₹{walletBalance}</strong>
                 </div>
-                <button
-                    onClick={() => setShowForm(!showForm)}
-                    className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-lg"
-                >
-                    {showForm ? 'Hide Form' : 'Add Funds to Wallet'}
-                </button>
             </div>
 
             {/* Show Add Funds Form if toggled */}
-            {showForm && (
+            { (
                 <div className="p-6 bg-gray-100 rounded-lg">
                     <h3 className="text-xl font-bold mb-4 text-center">Add Funds to Your Wallet</h3>
 

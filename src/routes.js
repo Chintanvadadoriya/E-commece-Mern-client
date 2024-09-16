@@ -23,10 +23,11 @@ import NotFound from './components/NotFound';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ChatPage from './pages/Chat/Chat';
 import { SocketProvider } from './Context/SocketContext';
-import PaymentForm from './components/PaymentForm';
+import PaymentForm from './components/PaymentWallet/PaymentForm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { publicStripeKey } from './constant';
+import TransactionHistory from './components/PaymentWallet/TransactionHistory';
 
 const stripePromise = loadStripe(publicStripeKey);
 const AppRoutes = () => {
@@ -56,6 +57,8 @@ const AppRoutes = () => {
             <Route path="/update-product/:id" element={<ProtectedRoute allowedRoles={['admin']}><UpdateProductData /></ProtectedRoute>} />
             <Route path="/chat" element={<ProtectedRoute allowedRoles={['admin','superAdmin']}><ChatPage /></ProtectedRoute>} />
             <Route path="/payment" element={<ProtectedRoute allowedRoles={['admin','superAdmin']}><PaymentForm /></ProtectedRoute>} />
+            <Route path="/transaction-history" element={<ProtectedRoute allowedRoles={['admin','superAdmin']}><TransactionHistory/></ProtectedRoute>} />
+
 
 
 
