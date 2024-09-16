@@ -50,6 +50,8 @@ export const routerPath = {
     createPaymentIntent:'/payment/create-payment-intent',
     savePaymentMethod:'/payment/store-payment-method',
     saveCardPaymentMethod:'/payment/pay-with-saved-card',
+    transactionHistory:'/payment/transactions-history',
+
 
 
 

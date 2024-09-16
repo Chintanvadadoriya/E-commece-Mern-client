@@ -478,3 +478,23 @@ export const saveCardPaymentMethodServiceApi = async (payload) => {
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+export const transactionHistory = async (payload) => {
+
+  try {
+    const url = `${routerPath.transactionHistory}`;
+
+    const response = await api.post(url,payload);
+    console.log('transactionHistory response', response)
+    return {
+      transactions:response?.data?.transactions,
+      totalTransactions:response?.data?.totalTransactions ,
+      totalPages:response?.data?.totalPages,
+      currentPage:response?.data?.currentPage,
+      msg:response.status
+    }
+  } catch (error) {
+    console.error('transactionHistory 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
