@@ -53,6 +53,12 @@ export const routerPath = {
     transactionHistory:'/payment/transactions-history',
 
 
+    createEventCalender:'/auth/create-event',
+    allEventData:"/auth/get-all-event",
+    deleteEvent:'/auth/delete-event',
+
+
+
 
 
 

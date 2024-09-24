@@ -24,4 +24,10 @@
         { path: '/transaction-history', label: 'Transaction-History' },
       ],
     },
+    {
+      title: 'Calender',
+      links: [
+        { path: '/calender', label: 'Calender' }
+      ],
+    },
   ];

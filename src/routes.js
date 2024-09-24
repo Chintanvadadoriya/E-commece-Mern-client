@@ -28,6 +28,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { publicStripeKey } from './constant';
 import TransactionHistory from './components/PaymentWallet/TransactionHistory';
+import Calender from './pages/Calender';
 
 const stripePromise = loadStripe(publicStripeKey);
 const AppRoutes = () => {
@@ -58,6 +59,8 @@ const AppRoutes = () => {
             <Route path="/chat" element={<ProtectedRoute allowedRoles={['admin','superAdmin']}><ChatPage /></ProtectedRoute>} />
             <Route path="/payment" element={<ProtectedRoute allowedRoles={['admin','superAdmin']}><PaymentForm /></ProtectedRoute>} />
             <Route path="/transaction-history" element={<ProtectedRoute allowedRoles={['admin','superAdmin']}><TransactionHistory/></ProtectedRoute>} />
+            <Route path="/calender" element={<ProtectedRoute allowedRoles={['admin','superAdmin']}><Calender/></ProtectedRoute>} />
+
 
 
 

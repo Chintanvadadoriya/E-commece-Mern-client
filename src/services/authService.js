@@ -498,3 +498,52 @@ export const transactionHistory = async (payload) => {
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+export const createEventService = async (payload) => {
+
+  try {
+    const url = `${routerPath.createEventCalender}`;
+
+    const response = await api.post(url,payload);
+    console.log('createEventService response', response)
+    return {
+      status:response?.status,
+      msg:response?.data?.msg,
+    }
+  } catch (error) {
+    console.error('createEventService 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const getAllEventDataService = async (payload) => {
+
+  try {
+    const url = `${routerPath.allEventData}`;
+
+    const response = await api.post(url,payload);
+    return {
+      data:response?.data?.eventData,
+      status:response?.status,
+    }
+  } catch (error) {
+    console.error('getAllEventDataService 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};
+
+export const deleteEventDataService = async (payload) => {
+
+  try {
+    const url = `${routerPath.deleteEvent}`;
+
+    const response = await api.post(url,payload);
+    return {
+      msg:response?.data?.msg,
+      status:response?.status,
+    }
+  } catch (error) {
+    console.error('deleteEventDataService 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};

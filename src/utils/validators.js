@@ -47,3 +47,8 @@ export const updateProfileSchema = yup.object().shape({
   image: yup.string().required('Image URL is required'),
   name: yup.string().required('Name is required'),
 });
+
+
+export const eventCalenderSchema = yup.object().shape({
+  title: yup.string().required('event name is required'),
+});
