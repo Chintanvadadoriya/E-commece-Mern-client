@@ -51,4 +51,6 @@ export const updateProfileSchema = yup.object().shape({
 
 export const eventCalenderSchema = yup.object().shape({
   title: yup.string().required('event name is required'),
+  description: yup.string().required('description is required'),
+
 });
