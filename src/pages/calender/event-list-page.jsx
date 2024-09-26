@@ -81,32 +81,24 @@ const EventListPage = () => {
   // Call fetchMoreData initially to load the first page of data
   useEffect(() => {
     fetchMoreData(); // Load the first page when the component mounts
-  }, []); // Empty dependency array ensures this runs only once on component mount
+  }, [searchTerm]); // Empty dependency array ensures this runs only once on component mount
 
   return (
-    <div>
+    <div
+      className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6`}
+    >
       {/* Search Bar */}
-      <div style={{ padding: '10px', textAlign: 'center' }}>
+      <div className="flex justify-start">
         <input
           type="text"
           placeholder="Search events..."
           onChange={(e) => handleSearch(e.target.value)} // Debounced search handler
-          style={{
-            padding: '8px',
-            width: '300px',
-            fontSize: '14px',
-            borderRadius: '5px',
-            border: '1px solid #ccc',
-          }}
+          className="p-4 mb-10 w-72 text-sm rounded-md border border-gray-300"
         />
       </div>
 
       {/* Scrollable Div for Infinite Scroll */}
-      <div
-        id="scrollableDiv"
-        style={{ height: '500px', overflowY: 'auto' }}
-        className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6`}
-      >
+      <div id="scrollableDiv" style={{ height: '500px', overflowY: 'auto' }}>
         <InfiniteScroll
           dataLength={data.length} // The current length of the data loaded
           next={fetchMoreData} // The function to call when loading more data
@@ -120,79 +112,46 @@ const EventListPage = () => {
           {data.map((item, index) => (
             <div
               key={index}
+              className={`border border-gray-300 mb-2 p-4 rounded-lg shadow-md flex flex-col gap-3 mx-auto w-full`} // fixed width for consistent look
               style={{
-                border: '1px solid #ccc',
-                margin: '10px',
-                padding: '15px',
-                backgroundColor: item.backgroundColor || 'lightyellow', // Set background color from item
-                color: item.textColor || 'black', // Set text color from item
-                borderRadius: '10px',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Add subtle shadow for better card design
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                marginLeft: 'auto',
-                marginRight: 'auto', // Center card horizontally
+                backgroundColor: item.backgroundColor || '#f0f4f8', // Dynamic background color
+                color: item.textColor || 'black', // Dynamic text color
               }}
             >
-              <h3
-                style={{
-                  marginBottom: '5px',
-                  fontSize: '18px',
-                  fontWeight: 'bold',
-                }}
-              >
-                {item.title}
-              </h3>
-              <p
-                style={{
-                  fontStyle: 'italic',
-                  fontSize: '14px',
-                  marginBottom: '5px',
-                }}
-              >
-                {item.description}
-              </p>
-              <div style={{ fontSize: '14px', marginBottom: '5px' }}>
-                <strong>Start Date:</strong>{' '}
-                {new Date(item.start).toLocaleDateString()}
+              {/* Calendar-like Header */}
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-bold truncate">{item.title}</h3>
+                <div className="bg-white text-black rounded-full px-2 py-1 shadow-sm text-xs">
+                  {new Date(item.start).toLocaleDateString()}
+                </div>
               </div>
-              <div style={{ fontSize: '14px', marginBottom: '5px' }}>
-                <strong>End Date:</strong>{' '}
-                {new Date(item.end).toLocaleDateString()}
+
+              {/* Description */}
+              <p className="text-sm mb-1 truncate">{item.description}</p>
+
+              {/* Date range */}
+              <div className="flex justify-start gap-2 text-sm font-semibold">
+                <div>
+                  <strong>Start:</strong>{' '}
+                  {new Date(item.start).toLocaleDateString()}
+                </div>
+                <div>
+                  <strong>End:</strong>{' '}
+                  {new Date(item.end).toLocaleDateString()}
+                </div>
               </div>
 
               {/* Edit and Delete Buttons */}
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginTop: '10px',
-                }}
-              >
+              <div className="flex justify-end mt-4 gap-1">
                 <button
                   onClick={() => handleEdit(item)}
-                  style={{
-                    padding: '5px 10px',
-                    backgroundColor: '#4CAF50',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    fontSize: '14px',
-                  }}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(item._id.$oid)}
-                  style={{
-                    padding: '5px 10px',
-                    backgroundColor: '#f44336',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    fontSize: '14px',
-                  }}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm"
                 >
                   Delete
                 </button>
