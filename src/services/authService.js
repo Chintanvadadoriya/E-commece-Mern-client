@@ -516,15 +516,18 @@ export const createEventService = async (payload) => {
   }
 };
 
-export const getAllEventDataService = async (payload) => {
+export const getAllEventDataService = async (payload,page,limit) => {
 
   try {
-    const url = `${routerPath.allEventData}`;
+    const url = `${routerPath.allEventData}?page=${page}&limit=${limit}`;
 
     const response = await api.post(url,payload);
     return {
       data:response?.data?.eventData,
       status:response?.status,
+      totalData:response?.data?.totalEventsCount,
+      totalPages:response?.data?.totalPages,
+
     }
   } catch (error) {
     console.error('getAllEventDataService 1612199', error)

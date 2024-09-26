@@ -11,7 +11,7 @@ import useToast from '../../hook/useToaster';
 import { Loader } from 'rsuite';
 import { createEventService } from '../../services/authService';
 
-function EventAdd({ isOpen, close, seectedDate }) {
+function EventAdd({ isOpen, close, seectedDate, selectedRange }) {
   const { token, user } = useSelector(UserData);
   const showToast = useToast();
   const {
@@ -39,17 +39,16 @@ function EventAdd({ isOpen, close, seectedDate }) {
   const onSubmit = async (payload) => {
     setLoading(true);
     try {
-        let eventData = {
-          email: user?.email,
-          title: payload?.title,
-          date: seectedDate,
-          userType: user?.userType,
-        };
+      let eventData = {
+        email: user?.email,
+        title: payload?.title,
+        date: seectedDate,
+        userType: user?.userType,
+      };
       let { status, msg } = await createEventService(eventData);
-      if(status == 201){
+      if (status == 201) {
         showToast('success', `${msg}`);
       }
-    
     } catch (error) {
       console.error('Failed to change password', error);
       showToast('error', `${error.message}`);
@@ -102,11 +101,7 @@ function EventAdd({ isOpen, close, seectedDate }) {
             className="h-11 w-full bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             disabled={loading} // Disable button while loading
           >
-            {loading ? (
-              <Loader content="password update..." />
-            ) : (
-              'Create Event'
-            )}
+            {loading ? <Loader content="password update..." /> : 'Create Event'}
           </button>
         </form>
 

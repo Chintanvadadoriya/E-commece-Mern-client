@@ -27,7 +27,9 @@
     {
       title: 'Calender',
       links: [
-        { path: '/calender', label: 'Calender' }
+        { path: '/calender', label: 'Calender' },
+        { path: '/all-events', label: 'My Events List' }
+
       ],
     },
   ];

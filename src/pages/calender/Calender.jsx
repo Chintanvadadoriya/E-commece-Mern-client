@@ -1,5 +1,5 @@
 import React from 'react'
-import CalendarComponent from '../components/CalendarComponent';
+import CalendarComponent from '../../components/CalendarComponent';
 const isLargeScreen = window.innerWidth > 1024;
 
 function Calender() {
