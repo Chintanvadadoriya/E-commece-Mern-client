@@ -56,6 +56,8 @@ export const routerPath = {
     createEventCalender:'/auth/create-event',
     allEventData:"/auth/get-all-event",
     deleteEvent:'/auth/delete-event',
+    updateEvent:'/auth/update-event',
+
 
 
 

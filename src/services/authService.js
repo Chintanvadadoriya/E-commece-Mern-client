@@ -550,3 +550,19 @@ export const deleteEventDataService = async (payload) => {
     throw new Error(error?.response?.data?.msg);
   }
 };
+
+export const UpdateEventDataService = async (payload) => {
+
+  try {
+    const url = `${routerPath.updateEvent}`;
+
+    const response = await api.put(url,payload);
+    return {
+      msg:response?.data?.message,
+      status:response?.status,
+    }
+  } catch (error) {
+    console.error('UpdateEventDataService 1612199', error)
+    throw new Error(error?.response?.data?.msg);
+  }
+};

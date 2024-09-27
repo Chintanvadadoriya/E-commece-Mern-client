@@ -8,15 +8,22 @@ import { useSelector } from 'react-redux';
 import { UserData } from '../../redux/authSlice';
 import useToast from '../../hook/useToaster';
 import { Loader } from 'rsuite';
-import { createEventService } from '../../services/authService';
+import { createEventService, UpdateEventDataService } from '../../services/authService';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { SketchPicker } from 'react-color';
 import moment from 'moment/moment';
 
-function EventAdd({ isOpen, close, seectedDate }) {
+function EventAdd({
+  isOpen,
+  close,
+  seectedDate,
+  isUpdate = false,
+  eventData,
+  resetEventListData,
+}) {
   const { user } = useSelector(UserData);
-  const textTitle= useRef('')
+  const textTitle = useRef('');
   const showToast = useToast();
   const {
     control,
@@ -29,24 +36,41 @@ function EventAdd({ isOpen, close, seectedDate }) {
 
   const [loading, setLoading] = useState(false);
   const [endDate, setEndDate] = useState(null);
+  const [startDate, setStart] = useState(null);
+
   const [backgroundColor, setBackgroundColor] = useState('black');
   const [textColor, setTextColor] = useState('#ffff');
 
+  // Pre-fill the form when updating an event
   useEffect(() => {
-    if (!isOpen) {
+    if (isUpdate && eventData) {
+      // Reset the form with the event data values when updating
+      reset({
+        title: eventData.title,
+        description: eventData.description,
+      });
+      setEndDate(new Date(eventData.end));
+      setStart(new Date(eventData.start));
+      setBackgroundColor(eventData.backgroundColor);
+      setTextColor(eventData.textColor);
+    } else {
+      // Clear form when not updating
       reset({
         title: '',
         description: '',
       });
+      setEndDate(null);
+      setBackgroundColor('black');
+      setTextColor('#ffff');
     }
-  }, [isOpen, reset]);
+  }, [isUpdate, eventData, reset]);
 
   if (!isOpen) return null;
 
   const onSubmit = async (payload) => {
     setLoading(true);
     try {
-      let eventData = {
+      let eventPayload = {
         email: user?.email,
         title: payload?.title,
         userType: user?.userType,
@@ -56,32 +80,42 @@ function EventAdd({ isOpen, close, seectedDate }) {
         backgroundColor: backgroundColor,
         textColor: textColor,
       };
-      console.log('eventData', eventData)
-      let { status, msg } = await createEventService(eventData);
-      if (status === 201) {
+
+      // If updating, include the event ID in the payload
+      let { status, msg } = !isUpdate
+        ? await createEventService(eventPayload) // Create new event
+        : await UpdateEventDataService({
+            ...eventPayload,
+            eventId: eventData._id,
+          }); // Update existing event
+
+      if (status === 201 || status === 200) {
         showToast('success', `${msg}`);
-        setBackgroundColor('')
-        setTextColor('');
-        close()
+        setBackgroundColor('black');
+        setTextColor('#ffff');
+        if(isUpdate) {
+           resetEventListData();
+        }
+        close();
       }
     } catch (error) {
-      console.error('Failed to create event', error);
+      console.error('Failed to create/update event', error);
       showToast('error', `${error.message}`);
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-70 z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-3xl">
-        {' '}
-        {/* Increased max width */}
-        <h2 className="text-black font-semibold mb-1 text-center">Add Event</h2>
+        <h2 className="text-black font-semibold mb-1 text-center">
+          {isUpdate ? 'Update Event' : 'Add Event'}
+        </h2>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="text-black space-y-6"
         >
-          {/* Title and Description on One Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Controller
               name="title"
@@ -115,17 +149,16 @@ function EventAdd({ isOpen, close, seectedDate }) {
             />
           </div>
 
-          {/* Start Date and End Date on One Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="mb-4">
               <label className="block mb-2 text-sm font-medium text-gray-700">
                 Start Date
               </label>
               <DatePicker
-                selected={seectedDate}
-                // onChange={(date) => setStartDate(date)}
+                selected={startDate || seectedDate}
                 className="border border-gray-300 p-2 rounded w-full"
                 dateFormat="dd/MM/yyyy"
+                disabled={isUpdate} // Disable start date editing when updating
               />
             </div>
 
@@ -143,38 +176,33 @@ function EventAdd({ isOpen, close, seectedDate }) {
             </div>
           </div>
 
-          {/* Background and Text Color Pickers on One Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
                 Background Color
               </label>
-              <div className="w-full">
-                <SketchPicker
-                  color={backgroundColor}
-                  onChangeComplete={(color) => setBackgroundColor(color.hex)}
-                  width="70%"
-                />
-              </div>
+              <SketchPicker
+                color={backgroundColor}
+                onChangeComplete={(color) => setBackgroundColor(color.hex)}
+                width="70%"
+              />
             </div>
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
                 Text Color
               </label>
-              <div className="w-full">
-                <SketchPicker
-                  color={textColor}
-                  onChangeComplete={(color) => setTextColor(color.hex)}
-                  width="70%"
-                />
-              </div>
+              <SketchPicker
+                color={textColor}
+                onChangeComplete={(color) => setTextColor(color.hex)}
+                width="70%"
+              />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <p className="text-gray-700 text-lg p-2">
-              Event Text Show in calender
+              Event Text Show in calendar
             </p>
             <p
               className={`text-lg rounded w-full p-2`}
@@ -187,13 +215,18 @@ function EventAdd({ isOpen, close, seectedDate }) {
             </p>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="h-11 w-full bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             disabled={loading}
           >
-            {loading ? <Loader content="Creating event..." /> : 'Create Event'}
+            {loading ? (
+              <Loader content="Processing event..." />
+            ) : isUpdate ? (
+              'Update Event'
+            ) : (
+              'Create Event'
+            )}
           </button>
         </form>
         <div className="mt-5 flex justify-end">
@@ -205,3 +238,4 @@ function EventAdd({ isOpen, close, seectedDate }) {
 }
 
 export default EventAdd;
+

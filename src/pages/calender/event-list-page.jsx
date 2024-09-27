@@ -8,6 +8,7 @@ import { UserData } from '../../redux/authSlice';
 import { useSelector } from 'react-redux';
 import debounce from 'lodash.debounce';
 import useToast from '../../hook/useToaster';
+import EventAdd from '../../components/common/EventAdd';
 const isLargeScreen = window.innerWidth > 1024;
 
 const EventListPage = () => {
@@ -19,8 +20,13 @@ const EventListPage = () => {
   const [hasMore, setHasMore] = useState(true); // Set whether more data is available
   const [loading, setLoading] = useState(false); // Prevent multiple fetches at once
   const [searchTerm, setSearchTerm] = useState(''); // Search term for filtering
+  const [showModal, setShowModal] = useState(false);
+  const [eventData, setEventData] = useState();
 
-
+  
+   const closeModel = () => {
+     setShowModal(false);
+   };
 
 // Refactored function to fetch data on page 0 after deletion
     const fetchInitialData = async () => {
@@ -99,8 +105,17 @@ const EventListPage = () => {
   // Edit event (placeholder logic)
   const handleEdit = (event) => {
     console.log('Edit event:', event);
+    setEventData(event)
+    setShowModal(true)
 
   };
+
+  function resetEventListData(){
+    setData([]); // Clear existing data
+    setPage(1);
+    setHasMore(true); // Allow loading of more data
+    fetchInitialData(); // Fetch the first page of data
+  }
 
   // Delete event (placeholder logic)
   const handleDelete = async (eventId) => {
@@ -109,10 +124,7 @@ const EventListPage = () => {
     if(status===200){
       showToast('success', `${msg}`);
       // Reset page and data, and refetch from the first page
-      setData([]); // Clear existing data
-      setPage(1);
-      setHasMore(true); // Allow loading of more data
-      fetchInitialData(); // Fetch the first page of data
+      resetEventListData()
     }
     } catch (error) {
       console.error('Error deleting event:', error);
@@ -197,6 +209,13 @@ const EventListPage = () => {
           ))}
         </InfiniteScroll>
       </div>
+      <EventAdd
+        isOpen={showModal}
+        close={closeModel}
+        eventData={eventData}
+        isUpdate={true}
+        resetEventListData={resetEventListData}
+      />
     </div>
   );
 };
