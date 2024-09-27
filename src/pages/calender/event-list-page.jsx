@@ -2,25 +2,60 @@ import React, { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
   getAllEventDataService,
-  deleteEventService,
-  editEventService,
+  deleteEventDataService,
 } from '../../services/authService'; // Assuming these services are defined
 import { UserData } from '../../redux/authSlice';
 import { useSelector } from 'react-redux';
 import debounce from 'lodash.debounce';
+import useToast from '../../hook/useToaster';
 const isLargeScreen = window.innerWidth > 1024;
 
 const EventListPage = () => {
   const { user } = useSelector(UserData);
+  const showToast = useToast();
 
   const [data, setData] = useState([]); // Store the fetched data
-  const [page, setPage] = useState(0); // Start with page 0
+  const [page, setPage] = useState(1); // Start with page 0
   const [hasMore, setHasMore] = useState(true); // Set whether more data is available
   const [loading, setLoading] = useState(false); // Prevent multiple fetches at once
   const [searchTerm, setSearchTerm] = useState(''); // Search term for filtering
 
+
+
+// Refactored function to fetch data on page 0 after deletion
+    const fetchInitialData = async () => {
+      setLoading(true); // Set loading to true to prevent multiple requests
+
+      try {
+        const payload = {
+          email: user?.email,
+          searchTerm: searchTerm, // Include searchTerm in the payload
+        };
+
+        const response = await getAllEventDataService(payload, 0, 5); // Fetch first page
+        const newItems = response.data;
+
+        // Set new data
+        setData(newItems);
+
+        // If there are fewer items than expected, set hasMore to false
+        if (newItems.length < 5) {
+          setHasMore(false);
+        } else {
+          setHasMore(true); // There may be more data to load
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setHasMore(false); // Stop fetching more data on error
+      } finally {
+        setLoading(false); // Set loading to false after fetching data
+      }
+    };
+
+
   // Fetch data function based on the page number and searchTerm
-  const fetchMoreData = async () => {
+ const fetchMoreData = async () => {
+ 
     if (loading) return; // Prevent fetching if already loading data
 
     setLoading(true); // Set loading to true while data is being fetched
@@ -42,9 +77,8 @@ const EventListPage = () => {
       if (newItems.length === 0 || newItems.length < 5) {
         setHasMore(false);
       }
-
-      // Increment the page number for the next call
       setPage((prevPage) => prevPage + 1);
+     
     } catch (error) {
       console.error('Error fetching data:', error);
       setHasMore(false);
@@ -65,22 +99,30 @@ const EventListPage = () => {
   // Edit event (placeholder logic)
   const handleEdit = (event) => {
     console.log('Edit event:', event);
-    // Add your edit logic here, for example:
-    // editEventService(event.id, updatedData)
+
   };
 
   // Delete event (placeholder logic)
   const handleDelete = async (eventId) => {
     try {
-    
+    let { msg ,status} = await deleteEventDataService({ id: eventId });
+    if(status===200){
+      showToast('success', `${msg}`);
+      // Reset page and data, and refetch from the first page
+      setData([]); // Clear existing data
+      setPage(1);
+      setHasMore(true); // Allow loading of more data
+      fetchInitialData(); // Fetch the first page of data
+    }
     } catch (error) {
       console.error('Error deleting event:', error);
+       showToast('error', `${error.message}`);
     }
   };
 
   // Call fetchMoreData initially to load the first page of data
   useEffect(() => {
-    fetchMoreData(); // Load the first page when the component mounts
+    fetchInitialData(); // Load the first page when the component mounts
   }, [searchTerm]); // Empty dependency array ensures this runs only once on component mount
 
   return (
@@ -112,24 +154,20 @@ const EventListPage = () => {
           {data.map((item, index) => (
             <div
               key={index}
-              className={`border border-gray-300 mb-2 p-4 rounded-lg shadow-md flex flex-col gap-3 mx-auto w-full`} // fixed width for consistent look
+              className={`border border-gray-300 mb-2 p-4 rounded-lg shadow-md flex flex-col gap-3 mx-auto w-full`}
               style={{
                 backgroundColor: item.backgroundColor || '#f0f4f8', // Dynamic background color
                 color: item.textColor || 'black', // Dynamic text color
               }}
             >
-              {/* Calendar-like Header */}
+              {/* Content */}
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold truncate">{item.title}</h3>
                 <div className="bg-white text-black rounded-full px-2 py-1 shadow-sm text-xs">
                   {new Date(item.start).toLocaleDateString()}
                 </div>
               </div>
-
-              {/* Description */}
               <p className="text-sm mb-1 truncate">{item.description}</p>
-
-              {/* Date range */}
               <div className="flex justify-start gap-2 text-sm font-semibold">
                 <div>
                   <strong>Start:</strong>{' '}
@@ -140,7 +178,6 @@ const EventListPage = () => {
                   {new Date(item.end).toLocaleDateString()}
                 </div>
               </div>
-
               {/* Edit and Delete Buttons */}
               <div className="flex justify-end mt-4 gap-1">
                 <button
@@ -150,7 +187,7 @@ const EventListPage = () => {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(item._id.$oid)}
+                  onClick={() => handleDelete(item._id)}
                   className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm"
                 >
                   Delete

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Cancel } from './Button';
 import CustomInput from './InputField';
 import { useForm, Controller } from 'react-hook-form';
@@ -16,6 +16,7 @@ import moment from 'moment/moment';
 
 function EventAdd({ isOpen, close, seectedDate }) {
   const { user } = useSelector(UserData);
+  const textTitle= useRef('')
   const showToast = useToast();
   const {
     control,
@@ -28,8 +29,8 @@ function EventAdd({ isOpen, close, seectedDate }) {
 
   const [loading, setLoading] = useState(false);
   const [endDate, setEndDate] = useState(null);
-  const [backgroundColor, setBackgroundColor] = useState('#ffffff');
-  const [textColor, setTextColor] = useState('#000000');
+  const [backgroundColor, setBackgroundColor] = useState('black');
+  const [textColor, setTextColor] = useState('#ffff');
 
   useEffect(() => {
     if (!isOpen) {
@@ -60,7 +61,8 @@ function EventAdd({ isOpen, close, seectedDate }) {
       if (status === 201) {
         showToast('success', `${msg}`);
         setBackgroundColor('')
-        textColor('')
+        setTextColor('');
+        close()
       }
     } catch (error) {
       console.error('Failed to create event', error);
@@ -69,7 +71,6 @@ function EventAdd({ isOpen, close, seectedDate }) {
       setLoading(false);
     }
   };
-
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-70 z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-3xl">
@@ -93,6 +94,7 @@ function EventAdd({ isOpen, close, seectedDate }) {
                   onChange={field.onChange}
                   label="Title"
                   error={errors.title}
+                  ref={textTitle}
                 />
               )}
             />
@@ -151,7 +153,7 @@ function EventAdd({ isOpen, close, seectedDate }) {
                 <SketchPicker
                   color={backgroundColor}
                   onChangeComplete={(color) => setBackgroundColor(color.hex)}
-                  width="100%"
+                  width="70%"
                 />
               </div>
             </div>
@@ -164,10 +166,25 @@ function EventAdd({ isOpen, close, seectedDate }) {
                 <SketchPicker
                   color={textColor}
                   onChangeComplete={(color) => setTextColor(color.hex)}
-                  width="100%"
+                  width="70%"
                 />
               </div>
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <p className="text-gray-700 text-lg p-2">
+              Event Text Show in calender
+            </p>
+            <p
+              className={`text-lg rounded w-full p-2`}
+              style={{
+                backgroundColor: backgroundColor,
+                color: textColor,
+              }}
+            >
+              Event Show Like This.
+            </p>
           </div>
 
           {/* Submit Button */}
