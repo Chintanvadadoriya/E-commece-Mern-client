@@ -9,3 +9,10 @@
   width: calc(100% - 30rem); /* Adjust the width as needed */
 }
 
+.card {
+  @apply bg-white shadow bg-indigo-200 rounded-lg w-full p-6;
+}
+
+.card-header {
+  @apply text-base sm:text-lg font-semibold;
+}
