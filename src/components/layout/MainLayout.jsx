@@ -30,7 +30,7 @@ const MainLayout = ({ children }) => {
   return (
     <div className="h-screen">
       <SidebarComponent setIsOpen={setIsOpen} isOpen={isOpen} toggleSidebar={toggleSidebar} />
-      <div className="flex flex-col flex-1">
+      <div className="flex-col flex-1">
         <HeaderComponent toggleSidebar={toggleSidebar} isOpen={isOpen} />
         <main className="flex-1 p-4 overflow-y-auto">
           {children}

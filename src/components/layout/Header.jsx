@@ -89,7 +89,7 @@ const Header = ({ toggleSidebar, isOpen }) => {
   }, [token, user]);
 
   return (
-    <header className="bg-blue-600 text-white p-4 ">
+    <header className="bg-blue-600 text-white p-4 sticky top-0 z-10">
       <div className="flex justify-between items-center">
         <div>
           <AiOutlineBars
