@@ -93,7 +93,7 @@ const AdminHeader = ({ toggleSidebar, isOpen }) => {
             onClick={toggleSidebar}
           />
         </div>
-        <h1 className="text-2xl text-center flex-grow">
+        <h1 className="sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-center flex-grow">
           E-Commerce Super-Admin Panel
         </h1>
         <div className="relative flex space-x-4">
@@ -103,11 +103,9 @@ const AdminHeader = ({ toggleSidebar, isOpen }) => {
               className=" relative inline-flex items-center  text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               <svg
-                class="w-[45px] h-[45px] text-gray-800 dark:text-white"
+                class="md:w-[45px] h-[45px] lg:w-[45px] h-[45px] text-gray-800 dark:text-white"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -131,15 +129,13 @@ const AdminHeader = ({ toggleSidebar, isOpen }) => {
           <span ref={dropdownNotificationRef}>
             <button
               type="button"
-              className="p-2 relative inline-flex items-center  text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="relative inline-flex items-center  text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               <svg
                 onClick={handleUserIconClickNotification}
-                className="w-[32px] h-[32px] text-gray-800 dark:text-white cursor-pointer text-white"
+                className="md:w-[32px] h-[32px] lg:w-[40px] h-[40px] text-gray-800 dark:text-white cursor-pointer text-white"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -157,7 +153,7 @@ const AdminHeader = ({ toggleSidebar, isOpen }) => {
               alt="no img"
               src={data?.profilePicture} // Use a high-resolution image
               onClick={handleUserIconClick}
-              className="w-[40px] h-[40px] text-gray-800 dark:text-white cursor-pointer rounded-full border-2 border-gray-300 shadow-lg transition-transform transform hover:scale-110 object-cover"
+              className="md:w-[40px] h-[40px] lg:w-[40px] h-[40px] text-gray-800 dark:text-white cursor-pointer rounded-full border-2 border-gray-300 shadow-lg transition-transform transform hover:scale-110 object-cover"
             />
 
             {isDropdownOpen && (
