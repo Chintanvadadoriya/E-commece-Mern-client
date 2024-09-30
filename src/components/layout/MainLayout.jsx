@@ -28,7 +28,7 @@ const MainLayout = ({ children }) => {
   const FooterComponent = userDataDecode?.userType === 'superAdmin' ? AdminFooter : Footer;
 
   return (
-    <div className="flex h-screen">
+    <div className="h-screen">
       <SidebarComponent setIsOpen={setIsOpen} isOpen={isOpen} toggleSidebar={toggleSidebar} />
       <div className="flex flex-col flex-1">
         <HeaderComponent toggleSidebar={toggleSidebar} isOpen={isOpen} />

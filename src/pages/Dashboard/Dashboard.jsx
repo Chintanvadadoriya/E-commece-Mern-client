@@ -72,8 +72,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div
-    >
+    <div >
       <h1 className="text-2xl font-semibold mb-6 flex justify-center mb-10">
         Dashboard
       </h1>

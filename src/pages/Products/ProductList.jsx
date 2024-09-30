@@ -4,9 +4,9 @@ const isLargeScreen = window.innerWidth > 1024
 
 function ProductList() {
   return (
-    <div>
+    <>
       <ProductTable isLargeScreen={isLargeScreen}/>
-    </div>
+    </>
   )
 }
 

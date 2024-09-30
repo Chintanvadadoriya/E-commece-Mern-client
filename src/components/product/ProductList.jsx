@@ -79,12 +79,17 @@ const ProductTable = ({ isLargeScreen }) => {
 
   return (
     <>
-      <div className={`${isLargeScreen ? 'custom-container' : ''} container mx-auto p-6`}>
-        <h1 className="text-2xl font-semibold mb-6 flex justify-center mb-10">Products List</h1>
-        <div className='mb-4 flex justify-between'>
+      <div>
+        <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold mb-6 flex justify-center mb-10">
+          Products List
+        </h1>
+        <div className="mb-4 md:flex justify-between">
           <SearchItem handleSearch={handleSearch} />
           <div>
-            <label htmlFor="limit" className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="limit"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Items per page:
             </label>
             <select
@@ -92,19 +97,20 @@ const ProductTable = ({ isLargeScreen }) => {
               name="limit"
               value={limit}
               onChange={handleLimitChange}
-              className="block w-[100%] p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="block sm:w-[50%]  md:w-[100%] p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
               <option value={20}>20</option>
             </select>
           </div>
-
         </div>
         <div>
-          <p>Total Product Data : <strong>{totalCount}</strong></p>
+          <p>
+            Total Product Data : <strong>{totalCount}</strong>
+          </p>
         </div>
-        <div className="overflow-x-auto shadow-md sm:rounded-lg">
+        <div className="overflow-x-scroll shadow-md sm:rounded-lg w-full">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -128,24 +134,46 @@ const ProductTable = ({ isLargeScreen }) => {
             <tbody>
               {data?.length === 0 && status !== 'loading' && (
                 <tr>
-                  <td colSpan="6" className="text-center p-5 text-sm text-gray-500">No Data Found!</td>
+                  <td
+                    colSpan="6"
+                    className="text-center p-5 text-sm text-gray-500"
+                  >
+                    No Data Found!
+                  </td>
                 </tr>
               )}
               {status === 'loading' && (
                 <tr>
-                  <td colSpan="6" className="text-center p-5 text-sm text-gray-500"><Loader /></td>
+                  <td
+                    colSpan="6"
+                    className="text-center p-5 text-sm text-gray-500"
+                  >
+                    <Loader />
+                  </td>
                 </tr>
               )}
               {status === 'failed' && (
                 <tr>
-                  <td colSpan="6" className="text-center p-5 text-sm text-red-500">Error: {error}</td>
+                  <td
+                    colSpan="6"
+                    className="text-center p-5 text-sm text-red-500"
+                  >
+                    Error: {error}
+                  </td>
                 </tr>
               )}
-              {
-                status === 'succeeded' && data.map((product, index) => (
-                  <tr key={product.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+              {status === 'succeeded' &&
+                data.map((product, index) => (
+                  <tr
+                    key={product.id}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                  >
                     <td className="p-4">
-                      <img src={product.images[0]} className="w-16 md:w-32 max-w-full max-h-full" alt={product.name} />
+                      <img
+                        src={product.images[0]}
+                        className="w-16 md:w-32 max-w-full max-h-full"
+                        alt={product.name}
+                      />
                     </td>
                     <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
                       {product.name}
@@ -158,17 +186,17 @@ const ProductTable = ({ isLargeScreen }) => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex">
-                        <EditeProduct updateProduct={() => updateProduct(product._id)} />
+                        <EditeProduct
+                          updateProduct={() => updateProduct(product._id)}
+                        />
                         <Delete openModal={() => openModal(product._id)} />
                       </div>
                     </td>
                   </tr>
-                ))
-              }
+                ))}
             </tbody>
           </table>
         </div>
-        {/* Pagination Controls */}
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={() => handlePageChange(page - 1)}
@@ -189,7 +217,14 @@ const ProductTable = ({ isLargeScreen }) => {
           </button>
         </div>
       </div>
-      <DeleteModel type='productModel' isOpen={isModalOpen} close={closeModal} productId={productId} onUpdate={handleDeleteProduct} />
+
+      <DeleteModel
+        type="productModel"
+        isOpen={isModalOpen}
+        close={closeModal}
+        productId={productId}
+        onUpdate={handleDeleteProduct}
+      />
     </>
   );
 };
