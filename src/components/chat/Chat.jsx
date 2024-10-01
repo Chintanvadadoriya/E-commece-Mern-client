@@ -388,14 +388,9 @@ function Chat({ isLargeScreen }) {
   const findUnreaderSenderMsg = (email) => {
     return unReadCountMsg.find((item) => item.senderEmail === email);
   };
-console.log('userChat', userChat)
 
   return (
-    <div
-      className={`${
-        isLargeScreen ? 'custom-container' : ''
-      } container mx-auto p-6 h-full w-full`}
-    >
+    <div>
       {user?.userType === 'superAdmin' && (
         <div className="flex  items-baseline justify-end space-y-6 gap-2">
           <button
@@ -422,9 +417,9 @@ console.log('userChat', userChat)
         </span>
       </div>
 
-      <div className="flex">
+      <div className="sm:flex">
         <div
-          className="w-1/4 bg-gray-200 p-4 rounded-lg  overflow-hidden"
+          className="sm:w-full  md:w-1/4 bg-gray-200 p-4 rounded-lg  overflow-hidden"
           style={{ height: '600px' }}
         >
           <h2 className="text-xl font-medium mb-4 flex justify-between items-center">
@@ -494,8 +489,7 @@ console.log('userChat', userChat)
 
         {selectedUser ? (
           <div
-            className="flex flex-col p-4 bg-gray-100 w-3/4 ml-4 rounded-lg"
-            style={{ height: '600px', overflow: 'hidden' }}
+            className="flex flex-col p-4 bg-gray-100 sm:w-full md:w-3/4  rounded-lg h-[600px] md:overflow-hidden"
           >
             <div
               className="flex-grow overflow-y-auto"
@@ -534,10 +528,10 @@ console.log('userChat', userChat)
                 {selectedUser?.name} is typing...
               </div>
             )}
-            <div className="flex items-center mt-4">
+            <div className="md:flex items-center mt-4">
               <button
                 onClick={() => setShowEmojiPicker((val) => !val)}
-                className="mr-2 p-2 bg-gray-200 text-black rounded-lg"
+                className="block mr-2 p-2 bg-gray-200 text-black rounded-lg"
               >
                 😊
               </button>
@@ -550,7 +544,7 @@ console.log('userChat', userChat)
               />
               <label
                 htmlFor="fileInput"
-                className="mr-2 p-2 bg-gray-200 text-black rounded-lg cursor-pointer"
+                className=" bg-gray-200 text-black rounded-lg cursor-pointer"
               >
                 <svg
                   className="w-6 h-6 text-gray-800 dark:text-white"
@@ -588,14 +582,16 @@ console.log('userChat', userChat)
           </div>
         ) : (
           <div
-            className="flex flex-col p-4 bg-gray-100 w-3/4 ml-4 rounded-lg"
+            className="flex flex-col p-4 bg-gray-100 sm: w-full md:w-3/4 rounded-lg"
             style={{ height: '600px', overflow: 'hidden' }}
           >
             <div
               className="flex flex-grow overflow-y-auto justify-center items-center"
               style={{ height: '80%' }}
             >
-              <h1>Select a conversation to start chatting !</h1>
+              <h1 className="text-base sm:text-lg md:text-xl">
+                Select a conversation to start chatting !
+              </h1>
             </div>
           </div>
         )}
